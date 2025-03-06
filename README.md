@@ -83,5 +83,5 @@ The Farmers Mandi project aims to create a platform connecting farmers and consu
 - Implement authentication and payments
 - Test and optimize search functionality
 
-Let me know if you want me to refine anything or add more detail! 🚀
+
 
