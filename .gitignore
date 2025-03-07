@@ -6,6 +6,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+migrations/versions/*.pyc
+alembic.ini
+
 # Virtual environment
 venv/
 env/
