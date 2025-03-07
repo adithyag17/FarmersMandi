@@ -4,8 +4,8 @@ from pydantic import BaseModel
 from app.db.base import Base
 
 ModelType = TypeVar("ModelType", bound=Base)
-CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
-UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
+CreateSchemaType = TypeVar("CreateSchemaType", bound="BaseModel")
+UpdateSchemaType = TypeVar("UpdateSchemaType", bound="BaseModel")
 
 class BaseRepository(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType]):
