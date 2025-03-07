@@ -1,12 +1,15 @@
 # Farmers Mandi Project
 
 ## Overview
+
 The Farmers Mandi project aims to create a platform connecting farmers and consumers through a simplified e-commerce experience. The application will be built with a responsive, mobile-first design and include essential features like product search, cart management, order tracking, and admin controls for inventory management.
 
 ## Frontend
+
 **Framework:** Vite React or Next.js (for easy deployment on Vercel)
 
 ### Components:
+
 1. **Home Page:** Simple landing page with a "Get Started" button leading to login/signup.
 2. **Authentication Page:** Supports Google Auth or in-house sign-up/login.
 3. **Product Listing Page:** Displays available items by category.
@@ -17,25 +20,31 @@ The Farmers Mandi project aims to create a platform connecting farmers and consu
 8. **Admin Dashboard:** For adding/updating products, prices, and order management. Includes reporting and analytics features.
 
 ## Backend
+
 **Framework:** FastAPI
 
 ### API Routes:
+
 - **Auth Routes:**
+
   - `/auth/login`
   - `/auth/signup`
   - `/auth/logout`
   - `/auth/refresh`
 
 - **User Routes:**
+
   - `/user/profile`: Manage user profile
 
 - **Product & Search Routes:**
+
   - `/home`: Fetch home page products
   - `/search/{query}`: Fuzzy, case-insensitive product search with filters and sorting
   - `/categories`: Manage product categories (Admin only)
   - `/inventory`: Manage product stock and availability (Admin only)
 
 - **Cart & Orders:**
+
   - `/cart`: Get current cart details
   - `/cart/clear`: Clear abandoned carts
   - `/payment`: Handle payment processing with failure and refund handling
@@ -51,11 +60,13 @@ The Farmers Mandi project aims to create a platform connecting farmers and consu
 ## Database Schema
 
 ### Roles:
+
 - **Admin:** `1`
 - **Customer:** `2`
 - **Delivery Boy:** `3`
 
 ### User Table:
+
 - `id`: Auto-generated (Primary Key)
 - `name`: String
 - `location`: String
@@ -66,6 +77,7 @@ The Farmers Mandi project aims to create a platform connecting farmers and consu
 - `updated_at`: Timestamp
 
 ### Product Table:
+
 - `product_id`: Integer (Primary Key)
 - `product_name`: String
 - `product_category`: String
@@ -80,6 +92,7 @@ The Farmers Mandi project aims to create a platform connecting farmers and consu
 - `updated_at`: Timestamp
 
 ### Cart Table:
+
 - `cart_id`: Integer (Primary Key)
 - `user_id`: Integer (FK to user)
 - `products`: List of products
@@ -87,6 +100,7 @@ The Farmers Mandi project aims to create a platform connecting farmers and consu
 - `created_at`: Timestamp
 
 ### Order Table:
+
 - `order_id`: Integer (Primary Key)
 - `user_id`: Integer (FK to user)
 - `products`: List of products
@@ -98,27 +112,27 @@ The Farmers Mandi project aims to create a platform connecting farmers and consu
 - `updated_at`: Timestamp
 
 ### Order History Table:
+
 - `history_id`: Integer (Primary Key)
 - `user_id`: Integer (FK to user)
 - `orders`: List of past orders
 - `created_at`: Timestamp
 
 ## Deployment
+
 - **Frontend:** Vercel
 - **Backend:** Cloud server or managed service (like AWS EC2 or DigitalOcean)
 - **Database:** PostgreSQL
 
-
 ## Security Considerations
+
 - **Auth:** JWT tokens with refresh mechanism
 - **Input Validation:** Sanitize and validate all inputs
 
 ## Next Steps
+
 - Design UI components
 - Set up FastAPI server
 - Connect frontend and backend
 - Implement authentication and payments
 - Test and optimize search functionality
-
-This should make your project more robust and ready for production! Let me know if you’d like to refine anything further. 🚀
-
