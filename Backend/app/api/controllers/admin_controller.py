@@ -66,6 +66,6 @@ def authorize_delivery(
     
     return {"success": True, "message": f"Order {order_id} marked as delivered"}
 
-@router.get("/reports/sales")
-def get_sales_report(
-    start_date:
+# @router.get("/reports/sales")
+# def get_sales_report(
+#     start_date:
