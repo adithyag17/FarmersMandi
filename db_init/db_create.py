@@ -1,14 +1,26 @@
 import psycopg2
 from psycopg2 import Error
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 def connect_to_db():
     try:
-        # Database connection string
-        connection_string = "postgresql://neondb_owner:npg_A3qLuZRV8Kos@ep-solitary-resonance-a1ysu7o8.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+        # Get database credentials from environment variables
+        db_params = {
+            'dbname': os.getenv('DB_NAME'),
+            'user': os.getenv('DB_USER'),
+            'password': os.getenv('DB_PASSWORD'),
+            'host': os.getenv('DB_HOST'),
+            'port': os.getenv('DB_PORT'),
+            'sslmode': os.getenv('DB_SSLMODE')
+        }
         
         # Establish connection
-        connection = psycopg2.connect(connection_string)
+        connection = psycopg2.connect(**db_params)
         return connection
     except Error as e:
         print(f"Error connecting to PostgreSQL: {e}")
