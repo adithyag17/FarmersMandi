@@ -103,11 +103,16 @@ class CartInDB(CartBase):
     expires_at: datetime
     created_at: datetime
 
+class CartCleared(BaseModel):
+    response: str
+
     class Config:
         orm_mode = True
 
+
 class Cart(CartInDB):
     pass
+
 
 # Order Schemas
 class OrderItemBase(BaseModel):

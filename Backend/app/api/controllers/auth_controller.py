@@ -13,10 +13,10 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 @router.post("/login", response_model=Token)
 def login(
-    form_data: LoginRequest,
+    form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
-    user = authenticate_user(db, form_data.email, form_data.password)
+    user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -49,7 +49,22 @@ def signup(
         )
     
     user = create_user(db, user_data)
-    return user
+
+    # Convert contact_number to string
+    user.contact_number = str(user.contact_number)
+
+    user_as_resp = {
+        "id": user.id,
+        "name": user.name,
+        "location": user.location,
+        "contact_number": user.contact_number,
+        "email": user.email,
+        "role": user.role,
+        "created_at": user.created_at,
+        "updated_at": user.updated_at
+    }
+    return user_as_resp
+
 
 @router.post("/refresh", response_model=Token)
 def refresh_access_token(

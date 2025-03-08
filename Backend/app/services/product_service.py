@@ -9,6 +9,10 @@ def create_product(db: Session, product_data: ProductCreate) -> Product:
 def get_product(db: Session, product_id: int) -> Optional[Product]:
     return product_repository.get_by_id(db, product_id=product_id)
 
+def get_product_price(db: Session, product_id: int) -> Optional[float]:
+    product = get_product(db, product_id)
+    return product.product_price
+
 def update_product(db: Session, product_id: int, product_data: ProductUpdate) -> Optional[Product]:
     db_product = product_repository.get_by_id(db, product_id=product_id)
     if not db_product:

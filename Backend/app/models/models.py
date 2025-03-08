@@ -47,7 +47,7 @@ class Order(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     products = Column(JSON)  # List of products with quantities
     total_order_price = Column(Integer)
-    order_status = Column(Integer)  # 1: Successful, 0: Failed, 2: In Progress, 3: Processing, 4: Shipped, 5: Delivered
+    order_status = Column(Integer)  # 1: Successful, 0: Failed, 2: In Progress ,3: Delivered
     delivery_address = Column(String)
     payment_details = Column(JSON)
     created_at = Column(TIMESTAMP, server_default=func.now())

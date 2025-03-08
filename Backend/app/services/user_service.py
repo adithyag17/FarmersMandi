@@ -26,3 +26,8 @@ def update_user(db: Session, user_id: int, user_data: UserUpdate) -> Optional[Us
 
 def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[User]:
     return user_repository.get_multi(db, skip=skip, limit=limit)
+
+def get_user_address(db: Session, user_id: int) -> Optional[str]:
+    from app.models.models import User
+    user = db.query(User).filter(User.id == user_id).first()
+    return user.location if user else None

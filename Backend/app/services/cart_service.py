@@ -16,5 +16,6 @@ def create_or_update_cart(db: Session, user_id: int, items: List[CartItemBase]) 
         cart_create = CartCreate(user_id=user_id, products=items)
         return cart_repository.create(db, obj_in=cart_create)
 
+
 def clear_cart(db: Session, user_id: int) -> bool:
     return cart_repository.clear_cart(db, user_id=user_id)

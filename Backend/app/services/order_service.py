@@ -1,23 +1,38 @@
 from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
 from app.models.schemas import OrderCreate, Order, OrderItemBase
+from app.services.cart_service import get_user_cart, clear_cart
+from app.services.user_service import get_user_address
+from app.services.product_service import get_product_price
 from app.repositories.order_repository import order_repository
 from app.services.cart_service import clear_cart
 
-def create_order(db: Session, user_id: int, products: List[OrderItemBase], 
-                 total_price: int, delivery_address: str) -> Order:
+def create_order(db: Session, user_id: int) -> Optional[Order]:
+    cart = get_user_cart(db, user_id)
+    
+    if not cart or not cart.products:
+        return None  # Return None if cart is empty
+    
+    delivery_address = get_user_address(db, user_id)
+    if not delivery_address:
+        return None
+    total_price = 0
+    for product in cart.products:
+        product_id = product["product_id"]
+        product_price = get_product_price(db, product_id)
+        total_price += product_price * product["quantity"]
+        product["price"] = product_price
+
+    
     order_data = OrderCreate(
         user_id=user_id,
-        products=products,
+        products=cart.products,
         total_order_price=total_price,
         delivery_address=delivery_address
     )
     
-    # Create the order
     order = order_repository.create(db, obj_in=order_data)
-    
-    # Clear the user's cart
-    clear_cart(db, user_id=user_id)
+    clear_cart(db, user_id)
     
     return order
 

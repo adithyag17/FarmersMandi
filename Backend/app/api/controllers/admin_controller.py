@@ -56,7 +56,7 @@ def authorize_delivery(
     
     # Get the order and update its status to delivered (5)
     from app.services.order_service import update_order_status
-    order = update_order_status(db, order_id=order_id, status=5)
+    order = update_order_status(db, order_id=order_id, status=3)
     
     if not order:
         raise HTTPException(

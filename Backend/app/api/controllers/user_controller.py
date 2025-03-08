@@ -20,6 +20,7 @@ def get_user_profile(
             detail="Invalid authentication credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    current_user.contact_number = str(current_user.contact_number)
     return current_user
 
 @router.put("/profile", response_model=User)
@@ -42,5 +43,5 @@ def update_user_profile(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found"
         )
-    
+    updated_user.contact_number = str(updated_user.contact_number)
     return updated_user

@@ -74,4 +74,4 @@ def clear_user_cart(
             detail="Cart not found"
         )
     
-    return None
+    return {None}

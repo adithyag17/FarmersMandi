@@ -12,14 +12,11 @@ router = APIRouter()
 
 @router.post("/", response_model=Order, status_code=status.HTTP_201_CREATED)
 def create_new_order(
-    products: List[OrderItemBase],
-    delivery_address: str,
-    total_price: int,
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ):
     """
-    Create a new order.
+    Create a new order from the current cart contents.
     """
     current_user = get_current_user(db, token)
     if not current_user:
@@ -27,14 +24,14 @@ def create_new_order(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials"
         )
+
+    order = create_order(db, user_id=current_user.id)
     
-    order = create_order(
-        db, 
-        user_id=current_user.id, 
-        products=products, 
-        total_price=total_price, 
-        delivery_address=delivery_address
-    )
+    if not order:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cart is empty or user address not found"
+        )
     
     return order
 
@@ -90,31 +87,31 @@ def read_order(
     
     return order
 
-@router.put("/{order_id}/status", response_model=Order)
-def update_order_status_endpoint(
-    order_id: int,
-    status_update: OrderStatusUpdate,
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
-):
-    """
-    Update order status (admin only).
-    """
-    current_user = get_current_user(db, token)
-    if not current_user or current_user.role != 1:  # Admin role check
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Permission denied"
-        )
+# @router.put("/{order_id}/status", response_model=Order)
+# def update_order_status_endpoint(
+#     order_id: int,
+#     status_update: OrderStatusUpdate,
+#     token: str = Depends(oauth2_scheme),
+#     db: Session = Depends(get_db)
+# ):
+#     """
+#     Update order status (admin only).
+#     """
+#     current_user = get_current_user(db, token)
+#     if not current_user or current_user.role != 1:  # Admin role check
+#         raise HTTPException(
+#             status_code=status.HTTP_403_FORBIDDEN,
+#             detail="Permission denied"
+#         )
     
-    order = update_order_status(db, order_id=order_id, status=status_update.order_status)
-    if not order:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Order not found"
-        )
+#     order = update_order_status(db, order_id=order_id, status=status_update.order_status)
+#     if not order:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail="Order not found"
+#         )
     
-    return order
+#     return order
 
 @router.post("/payment", response_model=PaymentResponse)
 def process_payment_endpoint(
