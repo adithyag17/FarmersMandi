@@ -11,13 +11,12 @@ The Farmers Mandi project aims to create a platform connecting farmers and consu
 ### Components:
 
 1. **Home Page:** Simple landing page with a "Get Started" button leading to login/signup.
-2. **Authentication Page:** Supports Google Auth or in-house sign-up/login.
-3. **Product Listing Page:** Displays available items by category.
-4. **Product Details & Cart:** Clicking a product opens a card to adjust quantities and proceed to checkout. Includes a search bar for products.
-5. **Checkout Page:** Shows product summary, total amount, and a payment button.
-6. **Payment Gateway:** Integrate with Razorpay or a cost-effective, reliable alternative.
-7. **Order Management:** Admin marks orders as completed or updates order status.
-8. **Admin Dashboard:** For adding/updating products, prices, and order management. Includes reporting and analytics features.
+2. **Authentication Page:** Supports in-house sign-up/login. - email and password accepted
+3. **Product Listing Page:** Displays available items by category.Includes a search bar for products.
+4. **Product Details & Cart:** Clicking a product opens a card to adjust quantities and proceed to checkout.
+5. **Checkout Page:** Shows product summary, total amount, and a payment button.(basically order summary)
+6. **Order Management:** Admin marks orders as completed or updates order status after recieving payment from customer on delivery(no online payment for now).
+7. **Admin Dashboard:** For adding/updating products, prices, and order management. Includes reporting and analytics features.
 
 ## Backend
 

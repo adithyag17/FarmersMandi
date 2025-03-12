@@ -1,0 +1,190 @@
+// src/styles/main.scss
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
+@import "variables";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-family;
+  font-size: $font-size-base;
+  color: $dark-text;
+  background-color: $light-bg;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-md;
+}
+
+h1 {
+  font-size: $font-size-xxl;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: $font-size-xl;
+  }
+}
+
+h2 {
+  font-size: $font-size-xl;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: $font-size-lg;
+  }
+}
+
+p {
+  margin-bottom: $spacing-md;
+}
+
+a {
+  color: $primary-color;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $secondary-color;
+  }
+}
+
+button,
+.button {
+  display: inline-block;
+  background-color: $primary-color;
+  color: $light-text;
+  border: none;
+  border-radius: $border-radius-md;
+  padding: $spacing-sm $spacing-lg;
+  font-family: $font-family;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+
+  &.secondary {
+    background-color: transparent;
+    border: 1px solid $primary-color;
+    color: $primary-color;
+
+    &:hover {
+      background-color: rgba($primary-color, 0.1);
+    }
+  }
+
+  &.large {
+    padding: $spacing-md $spacing-xl;
+    font-size: $font-size-lg;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  font-family: $font-family;
+  font-size: $font-size-base;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-md;
+  margin-bottom: $spacing-md;
+  background-color: white; /* Added this to fix black background */
+  color: $dark-text; /* Ensuring text is visible */
+  transition: border-color $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    background-color: white; /* Maintain white background when focused */
+  }
+
+  &::placeholder {
+    color: #888; /* Better placeholder visibility */
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+
+  @media (max-width: $breakpoint-md) {
+    padding: 0 $spacing-md;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: $spacing-lg;
+
+  label {
+    display: block;
+    margin-bottom: $spacing-xs;
+    font-weight: $font-weight-medium;
+  }
+
+  .error-message {
+    color: $error-color;
+    font-size: $font-size-sm;
+    margin-top: $spacing-xs;
+  }
+}
+
+.flex {
+  display: flex;
+
+  &.justify-between {
+    justify-content: space-between;
+  }
+
+  &.justify-center {
+    justify-content: center;
+  }
+
+  &.items-center {
+    align-items: center;
+  }
+
+  &.flex-col {
+    flex-direction: column;
+  }
+
+  &.flex-wrap {
+    flex-wrap: wrap;
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: $breakpoint-md) {
+  .hide-mobile {
+    display: none;
+  }
+
+  .mobile-full {
+    width: 100%;
+  }
+}

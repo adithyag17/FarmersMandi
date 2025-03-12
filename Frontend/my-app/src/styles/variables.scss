@@ -1,0 +1,63 @@
+// src/styles/variables.scss
+
+// Colors
+$primary-color: #3a6ea5;
+$secondary-color: #004e98;
+$accent-color: #ff6b6b;
+$light-bg: #f9f9f9;
+$dark-text: #333333;
+$light-text: #ffffff;
+$border-color: #e0e0e0;
+$error-color: #ff4d4f;
+$success-color: #52c41a;
+
+// Typography
+$font-family: "Montserrat", sans-serif;
+$font-size-base: 16px;
+$font-size-sm: 14px;
+$font-size-lg: 18px;
+$font-size-xl: 24px;
+$font-size-xxl: 32px;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 48px;
+
+// Breakpoints
+$breakpoint-xs: 360px;
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Border radius
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-full: 50%;
+
+// Z-index
+$z-index-base: 1;
+$z-index-dropdown: 10;
+$z-index-sticky: 20;
+$z-index-fixed: 30;
+$z-index-modal: 40;
+$z-index-popover: 50;
+$z-index-tooltip: 60;
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+$transition-slow: 0.5s ease;
+
+// Shadows
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);

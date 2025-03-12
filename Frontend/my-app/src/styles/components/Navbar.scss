@@ -1,0 +1,109 @@
+// src/styles/components/Navbar.scss
+
+@import "../variables";
+
+.navbar {
+  background-color: $light-bg;
+  box-shadow: $shadow-sm;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-index-fixed;
+
+  &-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md 0;
+  }
+
+  &-logo {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-lg;
+    color: $primary-color;
+
+    &:hover {
+      color: $secondary-color;
+    }
+  }
+
+  &-menu {
+    display: flex;
+    list-style: none;
+    align-items: center;
+
+    @media (max-width: $breakpoint-md) {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background-color: $light-bg;
+      box-shadow: $shadow-md;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height $transition-normal;
+
+      &.active {
+        max-height: 500px;
+        padding: $spacing-md 0;
+      }
+    }
+  }
+
+  &-item {
+    margin: 0 $spacing-md;
+
+    @media (max-width: $breakpoint-md) {
+      width: 100%;
+      text-align: center;
+      margin: $spacing-sm 0;
+    }
+  }
+
+  &-link {
+    color: $dark-text;
+    font-weight: $font-weight-medium;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+
+  &-buttons {
+    display: flex;
+    gap: $spacing-md;
+
+    @media (max-width: $breakpoint-md) {
+      flex-direction: column;
+      gap: $spacing-sm;
+      margin-top: $spacing-md;
+    }
+
+    .button {
+      margin: 0;
+    }
+  }
+
+  &-mobile-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+
+    span {
+      height: 3px;
+      width: 100%;
+      background-color: $dark-text;
+      border-radius: 10px;
+      transition: all $transition-fast;
+    }
+
+    @media (max-width: $breakpoint-md) {
+      display: flex;
+    }
+  }
+}

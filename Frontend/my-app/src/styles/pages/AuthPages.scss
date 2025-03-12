@@ -1,0 +1,111 @@
+// src/styles/pages/AuthPages.scss
+
+@import "../variables";
+
+.auth-page {
+  padding-top: 70px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xxl 0;
+}
+
+.auth-card {
+  background-color: $light-bg;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-lg;
+  padding: $spacing-xl;
+  width: 100%;
+  max-width: 500px;
+
+  @media (max-width: $breakpoint-sm) {
+    padding: $spacing-lg;
+  }
+}
+
+.auth-title {
+  text-align: center;
+  color: $secondary-color;
+  margin-bottom: $spacing-lg;
+}
+
+.auth-form {
+  margin-bottom: $spacing-lg;
+}
+
+.checkbox-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  margin-bottom: 0;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+  }
+
+  &.terms-checkbox {
+    margin-bottom: $spacing-xs;
+
+    span {
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+.forgot-password {
+  font-size: $font-size-sm;
+}
+
+.auth-button {
+  width: 100%;
+  padding: $spacing-md;
+  font-weight: $font-weight-bold;
+  margin-top: $spacing-md;
+}
+
+.auth-footer {
+  text-align: center;
+  border-top: 1px solid $border-color;
+  padding-top: $spacing-lg;
+
+  p {
+    margin-bottom: 0;
+    font-size: $font-size-sm;
+  }
+
+  a {
+    font-weight: $font-weight-medium;
+  }
+}
+
+.error-alert {
+  background-color: lighten($error-color, 35%);
+  color: $error-color;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius-md;
+  margin-bottom: $spacing-lg;
+  font-size: $font-size-sm;
+  border: 1px solid lighten($error-color, 20%);
+}
