@@ -91,17 +91,6 @@ const HomePage = () => {
         "Leafy green spinach packed with iron and vitamins. Freshly harvested each morning.",
     },
     {
-      id: 4,
-      name: "Fresh Spinach",
-      price: 30,
-      unit: "bunch",
-      image: "/api/placeholder/200/200",
-      farmer: "Riverside Farms",
-      category: "vegetables",
-      description:
-        "Leafy green spinach packed with iron and vitamins. Freshly harvested each morning.",
-    },
-    {
       id: 5,
       name: "Organic Mangoes",
       price: 150,
@@ -174,7 +163,7 @@ const HomePage = () => {
 
   // Get proper number of featured products based on screen size
   const getFeaturedProducts = () => {
-    return products.slice(0, isMobile ? 3 : 4);
+    return products.slice(0, isMobile ? 2 : 4);
   };
 
   // New handlers for product overlay
@@ -243,7 +232,6 @@ const HomePage = () => {
           ₹{product.price}/{product.unit}
         </p>
         <p className="product-farmer">Farmer: {product.farmer}</p>
-        {/* Add to cart button removed from card since clicking the card now opens overlay */}
       </div>
     </div>
   );
@@ -256,16 +244,18 @@ const HomePage = () => {
         <section className="search-section">
           <div className="search-container">
             <form className="search-form" onSubmit={handleSearch}>
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-              />
-              <button type="submit" className="search-button">
-                Search
-              </button>
+              <div className="search-input-container">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input"
+                />
+                <button type="submit" className="search-button">
+                  Search
+                </button>
+              </div>
             </form>
           </div>
         </section>

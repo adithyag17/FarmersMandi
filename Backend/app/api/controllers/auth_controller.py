@@ -7,16 +7,17 @@ from app.services.auth_service import authenticate_user, create_access_token, cr
 from app.services.user_service import create_user, get_user_by_email
 from datetime import timedelta
 from app.core.config.settings import settings
+from app.models.schemas import LoginRequestObject
 
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 @router.post("/login", response_model=Token)
 def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    form_data: LoginRequestObject,
     db: Session = Depends(get_db)
 ):
-    user = authenticate_user(db, form_data.username, form_data.password)
+    user = authenticate_user(db, form_data.email, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

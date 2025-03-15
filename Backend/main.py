@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 # Import controllers or routers
 from app.api.controllers.admin_controller import router as admin_router
@@ -10,7 +11,19 @@ from app.api.controllers.user_controller import router as user_router
 
 # Initialize the FastAPI app
 app = FastAPI()
+origins = [
+    "http://localhost:3000",  # React frontend
+    "http://localhost:5173",  # Vite default port if you're using Vite
+    "https://yourdomain.com",  # Production domain
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Explicitly allow OPTIONS
+    allow_headers=["Content-Type", "Authorization", "Accept"],
+)
 # Register routes
 app.include_router(admin_router, prefix="/admin", tags=["Admin"])
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])

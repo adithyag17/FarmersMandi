@@ -1,12 +1,16 @@
 // src/pages/LoginPage.tsx
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { login } from "../services/authService";
 import "../styles/pages/AuthPages.scss";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -56,29 +60,68 @@ const LoginPage = () => {
     return isValid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (validate()) {
-      // Submit form to your API
-      console.log("Form submitted:", formData);
+      setIsLoading(true);
+      try {
+        // Login user
+        await login({
+          email: formData.email,
+          password: formData.password,
+        });
 
-      // Example API call (replace with actual implementation)
-      // try {
-      //   const response = await fetch('/api/login', {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify(formData)
-      //   });
-      //   const data = await response.json();
-      //   if (data.success) {
-      //     // Redirect or set auth state
-      //   } else {
-      //     setErrors({ ...errors, general: data.message });
-      //   }
-      // } catch (error) {
-      //   setErrors({ ...errors, general: 'An error occurred. Please try again.' });
-      // }
+        // If "remember me" is not checked, we can set token expiration
+        if (!formData.rememberMe) {
+          // Set a flag to check token expiration time
+          const expireTime = new Date().getTime() + 24 * 60 * 60 * 1000; // 24 hours
+          localStorage.setItem("tokenExpiration", expireTime.toString());
+        }
+
+        // Redirect to dashboard or home
+        navigate("/home");
+      } catch (error: unknown) {
+        if (
+          error &&
+          typeof error === "object" &&
+          "response" in error &&
+          error.response &&
+          typeof error.response === "object" &&
+          "status" in error.response &&
+          error.response.status === 401
+        ) {
+          setErrors({
+            ...errors,
+            general: "Invalid email or password",
+          });
+        } else if (
+          error &&
+          typeof error === "object" &&
+          "response" in error &&
+          error.response &&
+          typeof error.response === "object" &&
+          "data" in error.response
+        ) {
+          setErrors({
+            ...errors,
+            general:
+              typeof error.response.data === "object" &&
+              error.response.data !== null &&
+              "detail" in error.response.data
+                ? String(error.response.data.detail)
+                : "Login failed. Please try again.",
+          });
+        } else {
+          setErrors({
+            ...errors,
+            general:
+              "An error occurred. Please check your connection and try again.",
+          });
+        }
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -104,6 +147,7 @@ const LoginPage = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
+                disabled={isLoading}
               />
               {errors.email && <p className="error-message">{errors.email}</p>}
             </div>
@@ -117,6 +161,7 @@ const LoginPage = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter your password"
+                disabled={isLoading}
               />
               {errors.password && (
                 <p className="error-message">{errors.password}</p>
@@ -130,6 +175,7 @@ const LoginPage = () => {
                   name="rememberMe"
                   checked={formData.rememberMe}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
                 <span>Remember me</span>
               </label>
@@ -138,8 +184,12 @@ const LoginPage = () => {
               </Link>
             </div>
 
-            <button type="submit" className="button auth-button">
-              Log In
+            <button
+              type="submit"
+              className="button auth-button"
+              disabled={isLoading}
+            >
+              {isLoading ? "Logging in..." : "Log In"}
             </button>
           </form>
 

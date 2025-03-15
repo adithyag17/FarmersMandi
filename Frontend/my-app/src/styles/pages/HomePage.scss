@@ -10,36 +10,46 @@
 
   .container {
     flex: 1;
-    padding: 15px;
+    padding: 10px;
     margin: 0 auto;
     width: 100%;
-    background-color: $light-bg;
     max-width: 100%;
+    background-color: $light-bg;
+    box-sizing: border-box;
   }
 
   /* Search Section */
   .search-section {
-    margin: 10px 0;
-    padding-top: 2.2rem;
+    margin: 5px 0;
+    padding-top: 1rem;
+
     .search-container {
       width: 100%;
       margin: 0 auto;
-      padding-top: 20px;
+      padding-top: 10px;
 
       .search-form {
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         border-radius: 8px;
         overflow: hidden;
+        background-color: white;
+
+        .search-input-container {
+          display: flex;
+          flex-direction: row;
+          width: 100%;
+        }
 
         .search-input {
-          width: 100%;
-          padding: 12px 15px;
+          flex: 1;
+          padding: 8px 10px;
           font-size: 14px;
           border: 1px solid #e0e0e0;
-          border-radius: 8px 8px 0 0;
+          border-right: none;
+          border-radius: 8px 0 0 8px;
           outline: none;
+          background-color: white;
+          color: $dark-text;
 
           &::placeholder {
             color: #888;
@@ -48,15 +58,15 @@
         }
 
         .search-button {
-          width: 100%;
+          padding: 8px 12px;
           background-color: $secondary-color;
           color: white;
           border: none;
-          padding: 12px 15px;
           font-size: 14px;
           cursor: pointer;
           transition: background-color 0.2s;
-          border-radius: 0 0 8px 8px;
+          border-radius: 0 8px 8px 0;
+          white-space: nowrap;
 
           &:hover {
             background-color: #3e9142;
@@ -68,20 +78,21 @@
 
   /* Search Results */
   .search-results {
-    margin: 15px 0;
+    margin: 10px 0;
     background-color: #f9f9f9;
     border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
     .results-header {
       display: flex;
-      flex-direction: column;
-      margin-bottom: 15px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
 
       h2 {
-        margin: 0 0 10px 0;
-        font-size: 20px;
+        margin: 0;
+        font-size: 16px;
       }
 
       .clear-button {
@@ -89,8 +100,8 @@
         border: none;
         color: $secondary-color;
         cursor: pointer;
-        font-size: 14px;
-        align-self: flex-end;
+        font-size: 12px;
+        padding: 5px;
 
         &:hover {
           text-decoration: underline;
@@ -100,14 +111,14 @@
 
     .results-container {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 15px;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 10px;
     }
 
     .no-results {
       text-align: center;
-      padding: 20px;
-      font-size: 16px;
+      padding: 15px;
+      font-size: 14px;
       color: #666;
     }
   }
@@ -115,12 +126,12 @@
   /* Featured Products and Category Sections */
   .featured-products,
   .product-category {
-    margin: 20px 0;
+    margin: 15px 0;
   }
 
   .section-title {
-    font-size: 22px;
-    margin-bottom: 15px;
+    font-size: 18px;
+    margin-bottom: 10px;
     color: #333;
     font-weight: 600;
   }
@@ -133,8 +144,8 @@
 
     .carousel-track {
       display: flex;
-      gap: 15px;
-      padding: 5px;
+      gap: 10px;
+      padding: 5px 0;
       overflow-x: auto;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
@@ -149,19 +160,20 @@
 
   /* Product Cards */
   .product-card {
-    min-width: 200px;
-    max-width: 100%;
+    min-width: 140px;
+    max-width: 45%;
+    flex: 0 0 auto;
     border-radius: 8px;
     overflow: hidden;
     background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
     scroll-snap-align: start;
     cursor: pointer;
 
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
     }
 
     &.featured {
@@ -169,7 +181,7 @@
     }
 
     .product-image {
-      height: 150px;
+      height: 120px;
       width: 100%;
       overflow: hidden;
 
@@ -186,41 +198,31 @@
     }
 
     .product-info {
-      padding: 12px;
+      padding: 8px;
 
       .product-name {
-        font-size: 16px;
-        margin: 0 0 6px 0;
+        font-size: 14px;
+        margin: 0 0 4px 0;
         color: #333;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .product-price {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
         color: $secondary-color;
-        margin: 6px 0;
+        margin: 4px 0;
       }
 
       .product-farmer {
         color: #666;
-        font-size: 12px;
-        margin-bottom: 10px;
-      }
-
-      .add-to-cart {
-        width: 100%;
-        padding: 8px;
-        background-color: $secondary-color;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.2s;
-
-        &:hover {
-          background-color: #3e9142;
-        }
+        font-size: 11px;
+        margin-bottom: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }
@@ -228,16 +230,17 @@
   /* View All Button */
   .view-all {
     text-align: center;
-    margin-top: 15px;
+    margin-top: 10px;
 
     .button.secondary {
       background-color: transparent;
       color: $secondary-color;
       border: 1px solid $secondary-color;
-      padding: 8px 15px;
+      padding: 6px 12px;
       border-radius: 4px;
       transition: background-color 0.2s;
-      font-size: 14px;
+      font-size: 13px;
+      display: inline-block;
 
       &:hover {
         background-color: rgba(76, 175, 80, 0.1);
@@ -247,8 +250,8 @@
 
   /* About Section */
   .about-section {
-    margin: 30px 0;
-    padding: 25px 15px;
+    margin: 20px 0;
+    padding: 15px;
     background-color: #f9f9f9;
     border-radius: 8px;
     text-align: center;
@@ -258,14 +261,28 @@
       margin: 0 auto;
 
       h2 {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
+        font-size: 18px;
       }
 
       p {
-        font-size: 16px;
-        line-height: 1.5;
+        font-size: 14px;
+        line-height: 1.4;
         color: #555;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
+      }
+    }
+  }
+
+  /* Small mobile to larger mobile transition */
+  @media screen and (min-width: 375px) {
+    .product-card {
+      min-width: 160px;
+
+      .product-info {
+        .product-name {
+          font-size: 15px;
+        }
       }
     }
   }
@@ -273,149 +290,165 @@
   /* Tablet styles */
   @media screen and (min-width: 576px) {
     .container {
-      padding: 15px;
+      padding: 12px;
     }
 
-    .search-results .results-header {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
+    .search-section {
+      padding-top: 1.5rem;
 
-      h2 {
-        margin: 0;
+      .search-container {
+        max-width: 90%;
+
+        .search-form {
+          .search-input {
+            padding: 10px 12px;
+          }
+
+          .search-button {
+            padding: 10px 15px;
+          }
+        }
       }
+    }
+
+    .section-title {
+      font-size: 20px;
     }
 
     .results-container {
       grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
 
     .product-card {
-      min-width: 220px;
+      min-width: 180px;
+      max-width: 48%;
+
+      .product-image {
+        height: 130px;
+      }
+
+      .product-info {
+        padding: 10px;
+
+        .product-name {
+          font-size: 16px;
+        }
+
+        .product-price {
+          font-size: 17px;
+        }
+
+        .product-farmer {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .about-section {
+      padding: 20px;
+
+      .about-content {
+        p {
+          font-size: 15px;
+        }
+      }
     }
   }
 
   /* Desktop styles */
   @media screen and (min-width: 768px) {
     .container {
-      padding: 20px;
+      padding: 15px;
       max-width: 1200px;
     }
 
-    .search-container {
-      max-width: 800px;
-      padding-top: 50px;
+    .search-section {
+      padding-top: 2rem;
 
-      .search-form {
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 2px 10px;
-        border-radius: 8px;
-        overflow: hidden;
-        background-color: white; /* Add this line */
-        .search-input {
-          flex: 1;
-          padding: 12px 15px;
-          font-size: 14px;
-          border: 1px solid #e0e0e0;
-          border-radius: 8px 8px 0 0;
-          outline: none;
-          background-color: white; /* Explicitly set white background */
-          color: $dark-text; /* Ensure text is visible */
+      .search-container {
+        max-width: 600px;
 
-          &::placeholder {
-            color: #888;
-            font-size: 14px;
+        .search-form {
+          .search-input-container {
+            display: flex;
           }
-        }
 
-        .search-input {
-          width: 100%;
-          padding: 12px 15px;
-          font-size: 14px;
-          border: 1px solid #e0e0e0;
-          border-radius: 8px 8px 0 0;
-          outline: none;
-          background-color: white; // Add this line
-          color: $dark-text; // Add this if it's not inherited correctly
-        }
+          .search-input {
+            font-size: 15px;
+          }
 
-        .search-button {
-          width: auto;
-          border-radius: 0 8px 8px 0;
-          padding: 0 25px;
-          font-size: 16px;
-          height: 100%;
+          .search-button {
+            font-size: 15px;
+          }
         }
       }
     }
 
     .section-title {
-      font-size: 28px;
-      margin-bottom: 20px;
+      font-size: 22px;
+      margin-bottom: 15px;
     }
 
     .results-container {
       grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
     }
 
     .carousel-container {
-      margin: 0 -10px;
-
       .carousel-track {
-        gap: 20px;
-        padding: 10px;
+        gap: 15px;
       }
     }
 
     .product-card {
-      min-width: 250px;
-      max-width: 300px;
+      min-width: 200px;
+      max-width: 230px;
 
       .product-image {
-        height: 180px;
+        height: 150px;
       }
 
       .product-info {
-        padding: 15px;
+        padding: 12px;
 
         .product-name {
-          font-size: 18px;
-          margin: 0 0 8px 0;
+          font-size: 17px;
+          margin: 0 0 6px 0;
         }
 
         .product-price {
-          font-size: 20px;
-          margin: 8px 0;
+          font-size: 18px;
+          margin: 6px 0;
         }
 
         .product-farmer {
-          font-size: 14px;
-          margin-bottom: 15px;
-        }
-
-        .add-to-cart {
-          padding: 10px;
+          font-size: 13px;
+          margin-bottom: 8px;
         }
       }
     }
 
     .view-all .button.secondary {
-      padding: 10px 20px;
-      font-size: 16px;
+      padding: 8px 16px;
+      font-size: 14px;
     }
 
     .about-section {
-      margin: 50px 0;
-      padding: 40px;
+      margin: 30px 0;
+      padding: 25px;
 
       .about-content {
         max-width: 700px;
 
+        h2 {
+          font-size: 22px;
+        }
+
         p {
-          font-size: 18px;
-          line-height: 1.6;
-          margin-bottom: 30px;
+          font-size: 16px;
+          line-height: 1.5;
+          margin-bottom: 20px;
         }
       }
     }
@@ -423,8 +456,35 @@
 
   /* Large desktop styles */
   @media screen and (min-width: 992px) {
+    .container {
+      padding: 20px;
+    }
+
+    .search-section {
+      .search-container {
+        max-width: 700px;
+      }
+    }
+
     .results-container {
       grid-template-columns: repeat(4, 1fr);
+    }
+
+    .product-card {
+      min-width: 220px;
+      max-width: 250px;
+
+      .product-image {
+        height: 160px;
+      }
+    }
+
+    .about-section {
+      padding: 30px;
+
+      .about-content {
+        max-width: 800px;
+      }
     }
   }
 }

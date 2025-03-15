@@ -88,6 +88,10 @@ class CartItemBase(BaseModel):
     product_id: int
     quantity: int
 
+class LoginRequestObject(BaseModel):
+    email: str
+    password: str
+    
 class CartBase(BaseModel):
     user_id: int
     products: List[CartItemBase]

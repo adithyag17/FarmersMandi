@@ -1,17 +1,23 @@
 // src/pages/SignupPage.tsx
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { signup } from "../services/authService";
 import "../styles/pages/AuthPages.scss";
 
 const SignupPage = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
+    contactNumber: "",
+    location: "",
     agreeTerms: false,
   });
 
@@ -20,12 +26,18 @@ const SignupPage = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    contactNumber: "",
+    location: "",
     agreeTerms: "",
     general: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -73,6 +85,15 @@ const SignupPage = () => {
       isValid = false;
     }
 
+    // Validate contact number (optional but must be valid if provided)
+    if (
+      formData.contactNumber &&
+      !/^\+?[0-9]{10,15}$/.test(formData.contactNumber)
+    ) {
+      newErrors.contactNumber = "Please enter a valid phone number";
+      isValid = false;
+    }
+
     if (!formData.agreeTerms) {
       newErrors.agreeTerms = "You must agree to the terms and conditions";
       isValid = false;
@@ -82,29 +103,47 @@ const SignupPage = () => {
     return isValid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (validate()) {
-      // Submit form to your API
-      console.log("Form submitted:", formData);
+      setIsLoading(true);
+      try {
+        // Prepare data for API (excluding confirmPassword and agreeTerms)
+        const userData = {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          contact_number: formData.contactNumber || undefined,
+          location: formData.location || undefined,
+          role: 2, // Default role
+        };
 
-      // Example API call (replace with actual implementation)
-      // try {
-      //   const response = await fetch('/api/signup', {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify(formData)
-      //   });
-      //   const data = await response.json();
-      //   if (data.success) {
-      //     // Redirect or set auth state
-      //   } else {
-      //     setErrors({ ...errors, general: data.message });
-      //   }
-      // } catch (error) {
-      //   setErrors({ ...errors, general: 'An error occurred. Please try again.' });
-      // }
+        // Call signup service
+        await signup(userData);
+
+        // Redirect to dashboard or home page
+        navigate("/login");
+      } catch (error: any) {
+        // Handle different error scenarios
+        if (error.response && error.response.data) {
+          // API returned an error message
+          setErrors({
+            ...errors,
+            general:
+              error.response.data.detail ||
+              "Registration failed. Please try again.",
+          });
+        } else {
+          setErrors({
+            ...errors,
+            general:
+              "An error occurred. Please check your connection and try again.",
+          });
+        }
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -130,6 +169,7 @@ const SignupPage = () => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your full name"
+                disabled={isLoading}
               />
               {errors.name && <p className="error-message">{errors.name}</p>}
             </div>
@@ -143,8 +183,41 @@ const SignupPage = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
+                disabled={isLoading}
               />
               {errors.email && <p className="error-message">{errors.email}</p>}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="contactNumber">Contact Number </label>
+              <input
+                type="tel"
+                id="contactNumber"
+                name="contactNumber"
+                value={formData.contactNumber}
+                onChange={handleChange}
+                placeholder="Enter your phone number"
+                disabled={isLoading}
+              />
+              {errors.contactNumber && (
+                <p className="error-message">{errors.contactNumber}</p>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="location">Address </label>
+              <textarea
+                id="location"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                placeholder="Enter your address"
+                disabled={isLoading}
+                rows={3}
+              />
+              {errors.location && (
+                <p className="error-message">{errors.location}</p>
+              )}
             </div>
 
             <div className="form-group">
@@ -156,6 +229,7 @@ const SignupPage = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Create a password"
+                disabled={isLoading}
               />
               {errors.password && (
                 <p className="error-message">{errors.password}</p>
@@ -171,6 +245,7 @@ const SignupPage = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="Confirm your password"
+                disabled={isLoading}
               />
               {errors.confirmPassword && (
                 <p className="error-message">{errors.confirmPassword}</p>
@@ -184,6 +259,7 @@ const SignupPage = () => {
                   name="agreeTerms"
                   checked={formData.agreeTerms}
                   onChange={handleChange}
+                  disabled={isLoading}
                 />
                 <span>
                   I agree to the <Link to="/terms">Terms of Service</Link> and{" "}
@@ -195,8 +271,12 @@ const SignupPage = () => {
               )}
             </div>
 
-            <button type="submit" className="button auth-button">
-              Sign Up
+            <button
+              type="submit"
+              className="button auth-button"
+              disabled={isLoading}
+            >
+              {isLoading ? "Creating Account..." : "Sign Up"}
             </button>
           </form>
 

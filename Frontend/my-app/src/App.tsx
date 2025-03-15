@@ -8,6 +8,7 @@ import AboutUs from "./pages/AboutUs";
 import HomePage from "./pages/HomePage";
 import CategoryPage from "./pages/CategoryPage";
 import CartPage from "./pages/CartPage";
+import MyProfile from "./pages/MyProfile";
 import "./styles/main.scss";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/category/:category" element={<CategoryPage />} />
+        <Route path="/My-Profile" element={<MyProfile />} />
         <Route path="/cart" element={<CartPage />} />
       </Routes>
     </Router>
