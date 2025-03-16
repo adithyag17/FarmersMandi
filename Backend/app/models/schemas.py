@@ -54,7 +54,6 @@ class ProductBase(BaseModel):
     product_weight: int
     product_price: int
     stock_quantity: int
-    seasonal_availability: bool
     images: List[str]
     ratings: float = 0.0
 
@@ -68,7 +67,6 @@ class ProductUpdate(BaseModel):
     product_weight: Optional[int] = None
     product_price: Optional[int] = None
     stock_quantity: Optional[int] = None
-    seasonal_availability: Optional[bool] = None
     images: Optional[List[str]] = None
     ratings: Optional[float] = None
 

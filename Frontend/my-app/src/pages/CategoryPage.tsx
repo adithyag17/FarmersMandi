@@ -18,6 +18,20 @@ interface Product {
   description?: string;
 }
 
+interface ApiProduct {
+  product_id: number;
+  product_name: string;
+  product_price: number;
+  product_category: string;
+  product_description: string;
+  product_weight: number;
+  stock_quantity: number;
+  images: string[];
+  ratings: number;
+  created_at: string;
+  updated_at: string;
+}
+
 interface CartItem {
   product: Product;
   quantity: number;
@@ -27,6 +41,7 @@ const CategoryPage = () => {
   const { category } = useParams<{ category: string }>();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Product overlay states
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -34,100 +49,48 @@ const CategoryPage = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   useEffect(() => {
-    // This would be replaced with an API call to fetch products from a database
-    // For now, using the same mock data from HomePage
-    const mockProducts: Product[] = [
-      {
-        id: 1,
-        name: "Fresh Tomatoes",
-        price: 40,
-        unit: "kg",
-        image: "/api/placeholder/200/200",
-        farmer: "Green Acres Farm",
-        category: "vegetables",
-        description:
-          "Juicy, ripe tomatoes grown naturally without chemical fertilizers. Perfect for salads and cooking.",
-      },
-      {
-        id: 2,
-        name: "Organic Apples",
-        price: 120,
-        unit: "kg",
-        image: "/api/placeholder/200/200",
-        farmer: "Hillside Orchards",
-        category: "fruits",
-        description:
-          "Sweet and crunchy apples, hand-picked from organic orchards. Rich in fiber and antioxidants.",
-      },
-      {
-        id: 3,
-        name: "Brown Rice",
-        price: 70,
-        unit: "kg",
-        image: "/api/placeholder/200/200",
-        farmer: "Valley Grains",
-        category: "grains",
-        description:
-          "Nutritious whole grain brown rice, naturally grown and sustainably harvested.",
-      },
-      {
-        id: 4,
-        name: "Fresh Spinach",
-        price: 30,
-        unit: "bunch",
-        image: "/api/placeholder/200/200",
-        farmer: "Riverside Farms",
-        category: "vegetables",
-        description:
-          "Leafy green spinach packed with iron and vitamins. Freshly harvested each morning.",
-      },
-      {
-        id: 5,
-        name: "Organic Mangoes",
-        price: 150,
-        unit: "kg",
-        image: "/api/placeholder/200/200",
-        farmer: "Sunshine Fruits",
-        category: "fruits",
-      },
-      {
-        id: 6,
-        name: "Millet Flour",
-        price: 60,
-        unit: "kg",
-        image: "/api/placeholder/200/200",
-        farmer: "Golden Harvest",
-        category: "grains",
-      },
-      {
-        id: 7,
-        name: "Fresh Potatoes",
-        price: 35,
-        unit: "kg",
-        image: "/api/placeholder/200/200",
-        farmer: "Hilltop Farms",
-        category: "vegetables",
-      },
-      {
-        id: 8,
-        name: "Organic Bananas",
-        price: 80,
-        unit: "dozen",
-        image: "/api/placeholder/200/200",
-        farmer: "Tropical Farms",
-        category: "fruits",
-      },
-    ];
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-    // Filter products by category
+        const response = await fetch(
+          `http://localhost:8000/product/category/${category}`
+        );
+
+        if (!response.ok) {
+          throw new Error(`Error fetching products: ${response.status}`);
+        }
+
+        const apiProducts: ApiProduct[] = await response.json();
+
+        // Map API products to the format expected by the component
+        const mappedProducts: Product[] = apiProducts.map((apiProduct) => ({
+          id: apiProduct.product_id,
+          name: apiProduct.product_name,
+          price: apiProduct.product_price / 100, // Converting from paise to rupees if needed
+          unit: `${apiProduct.product_weight}g`, // Using weight as unit
+          image:
+            apiProduct.images?.length > 0
+              ? `/images/${apiProduct.images[0]}`
+              : "/api/placeholder/200/200",
+          farmer: "Local Farmer", // This info is not in the API response, using placeholder
+          category: apiProduct.product_category.toLowerCase(),
+          description: apiProduct.product_description,
+        }));
+
+        setProducts(mappedProducts);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+        setError("Failed to load products. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (category) {
-      const filteredProducts = mockProducts.filter(
-        (product) => product.category.toLowerCase() === category.toLowerCase()
-      );
-      setProducts(filteredProducts);
+      fetchProducts();
     }
-
-    setLoading(false);
   }, [category]);
 
   // Handlers for product overlay
@@ -182,11 +145,7 @@ const CategoryPage = () => {
 
   // Product card component
   const ProductCard = ({ product }: { product: Product }) => (
-    <div
-      className="product-card"
-      key={product.id}
-      onClick={() => handleProductClick(product)}
-    >
+    <div className="product-card" onClick={() => handleProductClick(product)}>
       <div className="product-image">
         <img src={product.image} alt={product.name} />
       </div>
@@ -195,7 +154,6 @@ const CategoryPage = () => {
         <p className="product-price">
           ₹{product.price}/{product.unit}
         </p>
-        <p className="product-farmer">Farmer: {product.farmer}</p>
       </div>
     </div>
   );
@@ -212,6 +170,10 @@ const CategoryPage = () => {
 
         {loading ? (
           <div className="loading">Loading products...</div>
+        ) : error ? (
+          <div className="error-message">
+            <p>{error}</p>
+          </div>
         ) : products.length > 0 ? (
           <section className="products-grid">
             {products.map((product) => (

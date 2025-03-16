@@ -7,6 +7,22 @@ import Footer from "../components/Footer";
 import ProductOverlay from "../components/OrderSummaryOverlay";
 import "../styles/pages/HomePage.scss";
 
+// Backend Product interface
+interface BackendProduct {
+  product_id: number;
+  product_name: string;
+  product_price: number;
+  product_category: string;
+  product_description: string;
+  product_weight: number;
+  stock_quantity: number;
+  images: string[];
+  ratings: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Frontend Product interface
 interface Product {
   id: number;
   name: string;
@@ -23,16 +39,44 @@ interface CartItem {
   quantity: number;
 }
 
+// Function to map backend product to frontend product format
+const mapBackendToFrontend = (backendProduct: BackendProduct): Product => {
+  return {
+    id: backendProduct.product_id,
+    name: backendProduct.product_name,
+    price: backendProduct.product_price / 100, // Convert cents to dollars if needed
+    unit: backendProduct.product_weight
+      ? `${backendProduct.product_weight}g`
+      : "unit",
+    image: backendProduct.images?.[0] || "/api/placeholder/200/200",
+    farmer: "Local Farmer", // Default value
+    category: backendProduct.product_category,
+    description: backendProduct.product_description,
+  };
+};
+
 const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // New state for product overlay
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showProductOverlay, setShowProductOverlay] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  // State for all products (fetched once)
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [productsByCategory, setProductsByCategory] = useState<
+    Record<string, Product[]>
+  >({});
+  const [categories, setCategories] = useState<string[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+
+  // Maximum number of products to show per category
+  const MAX_PRODUCTS_PER_CATEGORY = 3;
 
   // Detect screen size changes
   useEffect(() => {
@@ -44,99 +88,59 @@ const HomePage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Mock product data for carousel and search
-  const products: Product[] = [
-    {
-      id: 1,
-      name: "Fresh Tomatoes",
-      price: 40,
-      unit: "kg",
-      image: "/api/placeholder/200/200",
-      farmer: "Green Acres Farm",
-      category: "vegetables",
-      description:
-        "Juicy, ripe tomatoes grown naturally without chemical fertilizers. Perfect for salads and cooking.",
-    },
-    {
-      id: 2,
-      name: "Organic Apples",
-      price: 120,
-      unit: "kg",
-      image: "/api/placeholder/200/200",
-      farmer: "Hillside Orchards",
-      category: "fruits",
-      description:
-        "Sweet and crunchy apples, hand-picked from organic orchards. Rich in fiber and antioxidants.",
-    },
-    {
-      id: 3,
-      name: "Brown Rice",
-      price: 70,
-      unit: "kg",
-      image: "/api/placeholder/200/200",
-      farmer: "Valley Grains",
-      category: "grains",
-      description:
-        "Nutritious whole grain brown rice, naturally grown and sustainably harvested.",
-    },
-    {
-      id: 4,
-      name: "Fresh Spinach",
-      price: 30,
-      unit: "bunch",
-      image: "/api/placeholder/200/200",
-      farmer: "Riverside Farms",
-      category: "vegetables",
-      description:
-        "Leafy green spinach packed with iron and vitamins. Freshly harvested each morning.",
-    },
-    {
-      id: 5,
-      name: "Organic Mangoes",
-      price: 150,
-      unit: "kg",
-      image: "/api/placeholder/200/200",
-      farmer: "Sunshine Fruits",
-      category: "fruits",
-    },
-    {
-      id: 6,
-      name: "Millet Flour",
-      price: 60,
-      unit: "kg",
-      image: "/api/placeholder/200/200",
-      farmer: "Golden Harvest",
-      category: "grains",
-    },
-    {
-      id: 7,
-      name: "Fresh Potatoes",
-      price: 35,
-      unit: "kg",
-      image: "/api/placeholder/200/200",
-      farmer: "Hilltop Farms",
-      category: "vegetables",
-    },
-    {
-      id: 8,
-      name: "Organic Bananas",
-      price: 80,
-      unit: "dozen",
-      image: "/api/placeholder/200/200",
-      farmer: "Tropical Farms",
-      category: "fruits",
-    },
-  ];
+  // Fetch all products once
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        setLoading(true);
+        // Make a single API call to get all products
+        const response = await fetch("http://localhost:8000/product");
 
-  // Group products by category
-  const productsByCategory = products.reduce((acc, product) => {
-    if (!acc[product.category]) {
-      acc[product.category] = [];
-    }
-    acc[product.category].push(product);
-    return acc;
-  }, {} as Record<string, Product[]>);
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch products: ${response.status} ${response.statusText}`
+          );
+        }
 
+        const backendProducts = (await response.json()) as BackendProduct[];
+        console.log("Fetched products:", backendProducts); // Debug log
+
+        // Convert all backend products to frontend format
+        const frontendProducts = backendProducts.map(mapBackendToFrontend);
+        setAllProducts(frontendProducts);
+
+        // Extract unique categories
+        const uniqueCategories = [
+          ...new Set(frontendProducts.map((p) => p.category)),
+        ];
+        setCategories(uniqueCategories);
+
+        // Group products by category
+        const productsByCat: Record<string, Product[]> = {};
+        for (const category of uniqueCategories) {
+          productsByCat[category] = frontendProducts.filter(
+            (p) => p.category === category
+          );
+        }
+        setProductsByCategory(productsByCat);
+
+        // Set featured products (taking first 4 products)
+        setFeaturedProducts(frontendProducts.slice(0, 4));
+
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
+        setLoading(false);
+      }
+    };
+
+    fetchProductData();
+  }, []);
+
+  // Client-side search implementation
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim() === "") {
@@ -144,12 +148,13 @@ const HomePage = () => {
       return;
     }
 
-    // Filter products based on search query
-    const results = products.filter(
+    // Perform search on the client-side using allProducts
+    const query = searchQuery.toLowerCase().trim();
+    const results = allProducts.filter(
       (product) =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.farmer.toLowerCase().includes(searchQuery.toLowerCase())
+        product.name.toLowerCase().includes(query) ||
+        product.description?.toLowerCase().includes(query) ||
+        product.category.toLowerCase().includes(query)
     );
 
     setSearchResults(results);
@@ -163,10 +168,10 @@ const HomePage = () => {
 
   // Get proper number of featured products based on screen size
   const getFeaturedProducts = () => {
-    return products.slice(0, isMobile ? 2 : 4);
+    return featuredProducts.slice(0, isMobile ? 2 : 4);
   };
 
-  // New handlers for product overlay
+  // Handlers for product overlay
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
     setShowProductOverlay(true);
@@ -210,7 +215,7 @@ const HomePage = () => {
     });
   };
 
-  // Product card component with click handler
+  // Product card component
   const ProductCard = ({
     product,
     featured = false,
@@ -220,7 +225,6 @@ const HomePage = () => {
   }) => (
     <div
       className={`product-card ${featured ? "featured" : ""}`}
-      key={product.id}
       onClick={() => handleProductClick(product)}
     >
       <div className="product-image">
@@ -231,10 +235,33 @@ const HomePage = () => {
         <p className="product-price">
           ₹{product.price}/{product.unit}
         </p>
-        <p className="product-farmer">Farmer: {product.farmer}</p>
       </div>
     </div>
   );
+
+  if (loading && !showSearchResults) {
+    return (
+      <div className="home-page">
+        <Navbar />
+        <div className="container">
+          <div className="loading">Loading products...</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error && !showSearchResults) {
+    return (
+      <div className="home-page">
+        <Navbar />
+        <div className="container">
+          <div className="error">Error: {error}</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="home-page">
@@ -297,48 +324,33 @@ const HomePage = () => {
               </div>
             </section>
 
-            {Object.entries(productsByCategory).map(
-              ([category, categoryProducts]) => (
-                <section className="product-category" key={category}>
-                  <h2 className="section-title">
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </h2>
-                  <div className="carousel-container">
-                    <div className="carousel-track">
-                      {categoryProducts.map((product) => (
+            {categories.map((category) => (
+              <section className="product-category" key={category}>
+                <h2 className="section-title">
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                </h2>
+                <div className="carousel-container">
+                  <div className="carousel-track">
+                    {productsByCategory[category]
+                      ?.slice(0, MAX_PRODUCTS_PER_CATEGORY)
+                      .map((product) => (
                         <ProductCard product={product} key={product.id} />
                       ))}
-                    </div>
                   </div>
-                  <div className="view-all">
-                    <Link
-                      to={`/category/${category}`}
-                      className="button secondary"
-                    >
-                      View All{" "}
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </Link>
-                  </div>
-                </section>
-              )
-            )}
+                </div>
+                <div className="view-all">
+                  <Link
+                    to={`/category/${category}`}
+                    className="button secondary"
+                  >
+                    View All{" "}
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </Link>
+                </div>
+              </section>
+            ))}
           </>
         )}
-
-        <section className="about-section">
-          <div className="about-content">
-            <h2 className="section-title">Buy Direct from Farmers</h2>
-            <p>
-              Farmers Mandi connects you directly with local farmers, ensuring
-              you get the freshest produce at fair prices. Support local
-              agriculture while enjoying high-quality, fresh food for your
-              family.
-            </p>
-            <Link to="/about-us" className="button secondary">
-              Learn More About Us
-            </Link>
-          </div>
-        </section>
       </div>
 
       {/* Product Overlay */}

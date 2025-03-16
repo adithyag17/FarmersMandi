@@ -25,7 +25,6 @@ class Product(Base):
     product_weight = Column(Integer)  # In kilograms
     product_price = Column(Integer)
     stock_quantity = Column(Integer)
-    seasonal_availability = Column(Boolean)
     images = Column(ARRAY(String))  # Array of image URLs
     ratings = Column(Float)
     created_at = Column(TIMESTAMP, server_default=func.now())
