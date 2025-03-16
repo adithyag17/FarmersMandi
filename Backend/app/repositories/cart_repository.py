@@ -1,9 +1,10 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from app.models.models import Cart
-from app.models.schemas import CartCreate, CartUpdate
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm.attributes import flag_modified
+from app.models.schemas import CartCreate, CartUpdate, CartItemBase
 from app.repositories.base import BaseRepository
-import json
 from datetime import datetime, timedelta
 
 class CartRepository(BaseRepository[Cart, CartCreate, CartUpdate]):
@@ -11,7 +12,7 @@ class CartRepository(BaseRepository[Cart, CartCreate, CartUpdate]):
         return db.query(Cart).filter(Cart.user_id == user_id).first()
     
     def create(self, db: Session, *, obj_in: CartCreate) -> Cart:
-        # Convert products list to JSON
+        # Convert products list to list of dictionaries for JSONB
         products_json = [item.dict() for item in obj_in.products]
         # Set expiry to 7 days
         expires_at = datetime.now() + timedelta(days=7)
@@ -26,6 +27,43 @@ class CartRepository(BaseRepository[Cart, CartCreate, CartUpdate]):
         db.refresh(db_obj)
         return db_obj
     
+    
+
+    def update(self, db: Session, *, db_obj: Cart, obj_in: CartUpdate) -> Cart:
+        # Ensure products is a list
+        existing_products = db_obj.products if isinstance(db_obj.products, list) else []
+
+        # Create a dictionary for fast lookup of existing products
+        product_map = {item['product_id']: item for item in existing_products}
+
+        for new_item in obj_in.products:
+            item_dict = new_item.dict()
+            product_id = item_dict['product_id']
+
+            if product_id in product_map:
+                # Update quantity of existing product
+                product_map[product_id]['quantity'] += item_dict['quantity']
+            else:
+                # Append new product
+                if item_dict['quantity'] > 0:
+                    product_map[product_id] = item_dict
+
+        # Convert back to list
+        db_obj.products = list(product_map.values())
+
+        # Mark column as modified for SQLAlchemy
+        flag_modified(db_obj, "products")
+
+        # Reset expiry
+        db_obj.expires_at = datetime.now() + timedelta(days=7)
+
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
+
+
+
     def clear_cart(self, db: Session, *, user_id: int) -> bool:
         cart = self.get_by_user(db, user_id=user_id)
         if cart:

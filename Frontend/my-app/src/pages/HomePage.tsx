@@ -74,6 +74,56 @@ const HomePage = () => {
   >({});
   const [categories, setCategories] = useState<string[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  // Add this useEffect after your other useEffect hooks in HomePage.tsx
+  useEffect(() => {
+    const fetchCart = async () => {
+      // Check if we have a token (user is logged in)
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const response = await fetch("http://localhost:8000/cart", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const cartData = await response.json();
+
+          // Map server cart items to our frontend format
+          if (cartData.products && Array.isArray(cartData.products)) {
+            // We need to find the actual product details for each cart item
+            const cartItemsWithDetails: CartItem[] = [];
+
+            // Process each cart item
+            for (const item of cartData.products) {
+              // Find the corresponding product in allProducts
+              const product = allProducts.find((p) => p.id === item.product_id);
+              if (product) {
+                cartItemsWithDetails.push({
+                  product,
+                  quantity: item.quantity,
+                });
+              }
+            }
+
+            // Update cart state
+            setCartItems(cartItemsWithDetails);
+          }
+        } else {
+          console.log("Failed to fetch cart:", response.status);
+        }
+      } catch (err) {
+        console.error("Error fetching cart:", err);
+      }
+    };
+
+    // Only fetch cart if we have products loaded
+    if (allProducts.length > 0) {
+      fetchCart();
+    }
+  }, [allProducts]); // Depend on allProducts so cart loads after products // Depend on allProducts so cart loads after products
 
   // Maximum number of products to show per category
   const MAX_PRODUCTS_PER_CATEGORY = 3;
@@ -359,6 +409,8 @@ const HomePage = () => {
         isOpen={showProductOverlay}
         onClose={handleCloseOverlay}
         onAddToCart={handleAddToCart}
+        token={localStorage.getItem("token") || undefined}
+        cartItems={cartItems}
       />
 
       <Footer />

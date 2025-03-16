@@ -21,21 +21,20 @@
   /* Search Section */
   .search-section {
     margin: 5px 0;
-    padding-top: 1rem;
 
     .search-container {
       width: 100%;
       margin: 0 auto;
-      padding-top: 10px;
 
       .search-form {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         border-radius: 8px;
         overflow: hidden;
-        background-color: white;
 
+        background-color: light-bg;
+        padding-top: 1.5rem;
         .search-input-container {
           display: flex;
+          padding-top: 2rem;
           flex-direction: row;
           width: 100%;
         }
@@ -62,6 +61,7 @@
           background-color: $secondary-color;
           color: white;
           border: none;
+          height: 80%;
           font-size: 14px;
           cursor: pointer;
           transition: background-color 0.2s;

@@ -168,22 +168,6 @@ const LoginPage = () => {
               )}
             </div>
 
-            <div className="form-group checkbox-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                />
-                <span>Remember me</span>
-              </label>
-              <Link to="/forgot-password" className="forgot-password">
-                Forgot Password?
-              </Link>
-            </div>
-
             <button
               type="submit"
               className="button auth-button"
