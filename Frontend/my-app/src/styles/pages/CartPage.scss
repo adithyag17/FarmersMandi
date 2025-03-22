@@ -41,7 +41,9 @@
     flex-direction: column;
     gap: 15px;
   }
-
+  .clear-cart-btn {
+    margin-left: 34%;
+  }
   .cart-item {
     display: flex;
     background-color: white;
@@ -197,7 +199,7 @@
 
     .continue-shopping {
       text-align: center;
-
+      padding-top: 1rem;
       a {
         color: $primary-color;
         text-decoration: none;

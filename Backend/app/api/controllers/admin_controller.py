@@ -5,7 +5,7 @@ from app.db.base import get_db
 from app.services.admin_service import ingest_products_from_excel, generate_sales_report, generate_inventory_report
 from app.api.controllers.auth_controller import oauth2_scheme
 from app.services.auth_service import get_current_user
-
+from app.services.order_service import update_order_status
 router = APIRouter()
 
 @router.post("/IngestProducts")
@@ -54,9 +54,9 @@ def authorize_delivery(
             detail="Permission denied"
         )
     
-    # Get the order and update its status to delivered (5)
-    from app.services.order_service import update_order_status
-    order = update_order_status(db, order_id=order_id, status=3)
+    # Get the order and update its status to delivered (1)
+    
+    order = update_order_status(db, order_id=order_id, status=1)
     
     if not order:
         raise HTTPException(
@@ -66,6 +66,5 @@ def authorize_delivery(
     
     return {"success": True, "message": f"Order {order_id} marked as delivered"}
 
-# @router.get("/reports/sales")
-# def get_sales_report(
-#     start_date:
+
+    

@@ -87,31 +87,31 @@ def read_order(
     
     return order
 
-# @router.put("/{order_id}/status", response_model=Order)
-# def update_order_status_endpoint(
-#     order_id: int,
-#     status_update: OrderStatusUpdate,
-#     token: str = Depends(oauth2_scheme),
-#     db: Session = Depends(get_db)
-# ):
-#     """
-#     Update order status (admin only).
-#     """
-#     current_user = get_current_user(db, token)
-#     if not current_user or current_user.role != 1:  # Admin role check
-#         raise HTTPException(
-#             status_code=status.HTTP_403_FORBIDDEN,
-#             detail="Permission denied"
-#         )
+@router.put("/change-status", response_model=Order)
+def update_order_status_endpoint(
+    order_id: int,
+    status_update: OrderStatusUpdate,
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
+    """
+    Update order status (admin only).
+    """
+    current_user = get_current_user(db, token)
+    if not current_user or current_user.role != 1:  # Admin role check
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Permission denied"
+        )
     
-#     order = update_order_status(db, order_id=order_id, status=status_update.order_status)
-#     if not order:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="Order not found"
-#         )
-    
-#     return order
+    order = update_order_status(db, order_id=order_id, status=status_update.order_status)
+    if not order:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Order not found"
+        )
+    order = update_order_status(db,order_id,status_update) 
+    return order
 
 @router.post("/payment", response_model=PaymentResponse)
 def process_payment_endpoint(

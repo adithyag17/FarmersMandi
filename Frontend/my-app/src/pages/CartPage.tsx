@@ -1,10 +1,9 @@
-// src/pages/CartPage.tsx
+// src/pages/CartPage.tsx - Updated Frontend
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import OrderSummaryOverlay from "../components/OrderSummaryOverlay";
 import "../styles/pages/CartPage.scss";
 import axios from "axios";
 
@@ -54,12 +53,14 @@ interface CartResponse {
 // API URLs
 const CART_API_URL = "http://localhost:8000/cart";
 const PRODUCT_API_URL = "http://localhost:8000/product";
+const ORDER_API_URL = "http://localhost:8000/order";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [showOrderSummary, setShowOrderSummary] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+  const navigate = useNavigate();
 
   // Function to fetch a single product by ID
   const fetchProductById = async (productId: number) => {
@@ -67,6 +68,9 @@ const CartPage = () => {
       const response = await axios.get<ProductResponse>(
         `${PRODUCT_API_URL}/${productId}`
       );
+      if (response.status === 401) {
+        navigate("/login");
+      }
       return response.data;
     } catch (err) {
       console.error(`Error fetching product ${productId}:`, err);
@@ -87,7 +91,7 @@ const CartPage = () => {
         productResponse.images.length > 0
           ? productResponse.images[0]
           : "placeholder.jpg",
-      farmer: "Local Farmer", // This information might need to come from another API call
+      farmer: "Local Farmer",
       category: productResponse.product_category,
       description: productResponse.product_description,
     };
@@ -113,7 +117,9 @@ const CartPage = () => {
         },
       });
       console.log("Cart API response:", cartResponse.data);
-
+      if (cartResponse.status === 401) {
+        navigate("/login");
+      }
       // If cart is empty, set empty cart items and return
       if (
         !cartResponse.data.products ||
@@ -164,6 +170,7 @@ const CartPage = () => {
     fetchCartItems();
   }, []);
 
+  // IMPORTANT: This approach works with the current backend implementation
   const handleQuantityChange = async (
     productId: number,
     newQuantity: number
@@ -171,42 +178,36 @@ const CartPage = () => {
     if (newQuantity < 0) return;
 
     try {
-      // Update locally first for better UX
+      // Get the token from localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("You must be logged in to update your cart");
+        return;
+      }
+
+      // Update local state first
       const updatedCartItems = cartItems
         .map((item) =>
           item.product.id === productId
             ? { ...item, quantity: newQuantity }
             : item
         )
-        .filter((item) => item.quantity > 0);
+        .filter((item) => item.quantity > 0); // Remove items with zero quantity
 
       setCartItems(updatedCartItems);
 
-      // Prepare data for API update
-      const itemsForApi = updatedCartItems.map((item) => ({
+      // Format the complete cart data for the API
+      const cartUpdateData = updatedCartItems.map((item) => ({
         product_id: item.product.id,
         quantity: item.quantity,
       }));
 
-      // Get the token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("You must be logged in to update your cart");
-        await fetchCartItems(); // Revert to server state
-        return;
-      }
-
-      // Send update to API
-      console.log("Updating cart with:", itemsForApi);
-      await axios.post(
-        CART_API_URL,
-        { products: itemsForApi },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // Send the complete cart data to the backend
+      await axios.post(CART_API_URL, cartUpdateData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
     } catch (err) {
       console.error("Error updating cart:", err);
       setError("Failed to update cart. Please try again.");
@@ -217,37 +218,31 @@ const CartPage = () => {
 
   const handleRemoveItem = async (productId: number) => {
     try {
-      // Update locally first for better UX
+      // Get the token from localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("You must be logged in to update your cart");
+        return;
+      }
+
+      // Update local state by removing the item
       const updatedCartItems = cartItems.filter(
         (item) => item.product.id !== productId
       );
       setCartItems(updatedCartItems);
 
-      // Prepare data for API update
-      const itemsForApi = updatedCartItems.map((item) => ({
+      // Format the complete cart data for the API
+      const cartUpdateData = updatedCartItems.map((item) => ({
         product_id: item.product.id,
         quantity: item.quantity,
       }));
 
-      // Get the token from localStorage
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("You must be logged in to update your cart");
-        await fetchCartItems(); // Revert to server state
-        return;
-      }
-
-      // Send update to API
-      console.log("Updating cart after removal:", itemsForApi);
-      await axios.post(
-        CART_API_URL,
-        { products: itemsForApi },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // Send the complete cart data to the backend
+      await axios.post(CART_API_URL, cartUpdateData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
     } catch (err) {
       console.error("Error removing item:", err);
       setError("Failed to remove item. Please try again.");
@@ -255,7 +250,6 @@ const CartPage = () => {
       await fetchCartItems();
     }
   };
-
   const calculateSubtotal = () => {
     return cartItems.reduce(
       (total, item) => total + item.product.price * item.quantity,
@@ -273,16 +267,58 @@ const CartPage = () => {
     return calculateSubtotal() + calculateDeliveryFee();
   };
 
-  const handlePlaceOrder = () => {
-    setShowOrderSummary(true);
-    // Prevent body scrolling when overlay is open
-    document.body.style.overflow = "hidden";
-  };
+  // Updated handlePlaceOrder function to match the corrected cart format
+  const handlePlaceOrder = async () => {
+    try {
+      setIsSubmittingOrder(true);
 
-  const handleCloseOrderSummary = () => {
-    setShowOrderSummary(false);
-    // Re-enable body scrolling
-    document.body.style.overflow = "auto";
+      // Get the token from localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("You must be logged in to place an order");
+        setIsSubmittingOrder(false);
+        return;
+      }
+
+      // Prepare order data - format based on the updated cart approach
+      const orderItems = cartItems.map((item) => ({
+        product_id: item.product.id,
+        quantity: item.quantity,
+      }));
+
+      const orderData = {
+        items: orderItems,
+        delivery_fee: calculateDeliveryFee(),
+        total_amount: calculateTotal(),
+      };
+
+      console.log("Submitting order:", orderData);
+
+      // Send order to API
+      const response = await axios.post(ORDER_API_URL, orderData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("Order submission response:", response);
+      if (response.status === 401) {
+        navigate("/login");
+      }
+      if (response.status === 201) {
+        // Clear the cart
+        await handleClearCart();
+
+        // Redirect to the myorders page
+        navigate("/myorders");
+      }
+
+      setIsSubmittingOrder(false);
+    } catch (err) {
+      console.error("Error submitting order:", err);
+      setError("Failed to place your order. Please try again.");
+      setIsSubmittingOrder(false);
+    }
   };
 
   const handleClearCart = async () => {
@@ -350,7 +386,7 @@ const CartPage = () => {
                               item.quantity - 1
                             )
                           }
-                          disabled={loading}
+                          disabled={loading || isSubmittingOrder}
                         >
                           -
                         </button>
@@ -363,7 +399,7 @@ const CartPage = () => {
                               item.quantity + 1
                             )
                           }
-                          disabled={loading}
+                          disabled={loading || isSubmittingOrder}
                         >
                           +
                         </button>
@@ -371,7 +407,7 @@ const CartPage = () => {
                       <button
                         className="remove-btn"
                         onClick={() => handleRemoveItem(item.product.id)}
-                        disabled={loading}
+                        disabled={loading || isSubmittingOrder}
                       >
                         Remove
                       </button>
@@ -405,14 +441,14 @@ const CartPage = () => {
               <button
                 className="place-order-btn"
                 onClick={handlePlaceOrder}
-                disabled={loading}
+                disabled={loading || isSubmittingOrder}
               >
-                Place Order
+                {isSubmittingOrder ? "Processing..." : "Place Order"}
               </button>
               <button
                 className="clear-cart-btn"
                 onClick={handleClearCart}
-                disabled={loading}
+                disabled={loading || isSubmittingOrder}
               >
                 Clear Cart
               </button>
@@ -431,15 +467,6 @@ const CartPage = () => {
           </div>
         )}
       </div>
-
-      <OrderSummaryOverlay
-        isOpen={showOrderSummary}
-        onClose={handleCloseOrderSummary}
-        cartItems={cartItems}
-        subtotal={calculateSubtotal()}
-        deliveryFee={calculateDeliveryFee()}
-        total={calculateTotal()}
-      />
 
       <Footer />
     </div>

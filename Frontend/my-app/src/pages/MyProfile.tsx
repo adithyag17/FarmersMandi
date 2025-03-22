@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ChevronDown,
   ChevronUp,
@@ -6,7 +7,6 @@ import {
   Save,
   X,
   Package,
-  Clock,
   User,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
@@ -16,110 +16,111 @@ import "../styles/pages/MyProfile.scss";
 interface UserDetails {
   name: string;
   email: string;
-  phone: string;
-  address: string;
-}
-
-interface OrderItem {
-  id: string;
-  product: string;
-  price: number;
-  quantity: number;
-  status: string;
-  date: string;
+  contact_number: string; // Changed from phone to match backend
+  location: string; // Changed from address to match backend
+  id?: number;
+  role?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 const MyProfile: React.FC = () => {
+  const navigate = useNavigate();
+
   // State for dropdown sections
   const [isUserDetailsOpen, setIsUserDetailsOpen] = useState(true);
-  const [isOrdersOpen, setIsOrdersOpen] = useState(false);
-  const [activeOrderTab, setActiveOrderTab] = useState<"current" | "history">(
-    "current"
-  );
 
   // State for user details
   const [userDetails, setUserDetails] = useState<UserDetails>({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+1 123-456-7890",
-    address: "123 Main St, New York, NY 10001",
+    name: "",
+    email: "",
+    contact_number: "",
+    location: "",
   });
+
+  // State for loading and error handling
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // State for edit mode
   const [isEditing, setIsEditing] = useState(false);
   const [editedDetails, setEditedDetails] = useState<UserDetails>(userDetails);
 
-  // State for orders
-  const [currentOrders, setCurrentOrders] = useState<OrderItem[]>([]);
-  const [orderHistory, setOrderHistory] = useState<OrderItem[]>([]);
-
-  // Simulate fetching orders from an API
+  // Fetch user profile on component mount
   useEffect(() => {
-    // Simulated API call
-    const fetchOrders = () => {
-      // Mock data
-      const mockCurrentOrders: OrderItem[] = [
-        {
-          id: "ORD-001",
-          product: "Bluetooth Headphones",
-          price: 79.99,
-          quantity: 1,
-          status: "Shipped",
-          date: "2025-03-10",
-        },
-        {
-          id: "ORD-002",
-          product: "Wireless Mouse",
-          price: 29.99,
-          quantity: 1,
-          status: "Processing",
-          date: "2025-03-12",
-        },
-      ];
-
-      const mockOrderHistory: OrderItem[] = [
-        {
-          id: "ORD-000",
-          product: "Mechanical Keyboard",
-          price: 129.99,
-          quantity: 1,
-          status: "Delivered",
-          date: "2025-02-15",
-        },
-        {
-          id: "ORD-00A",
-          product: "USB-C Cable",
-          price: 15.99,
-          quantity: 2,
-          status: "Delivered",
-          date: "2025-01-20",
-        },
-        {
-          id: "ORD-00B",
-          product: "Laptop Stand",
-          price: 45.99,
-          quantity: 1,
-          status: "Delivered",
-          date: "2024-12-05",
-        },
-      ];
-
-      setCurrentOrders(mockCurrentOrders);
-      setOrderHistory(mockOrderHistory);
-    };
-
-    fetchOrders();
+    fetchUserProfile();
   }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Get auth token from localStorage
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+
+      const response = await fetch("http://localhost:8000/user/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status == 401) {
+        navigate("/login");
+      }
+
+      if (!response.ok) {
+        throw new Error(`Error fetching profile: ${response.status}`);
+      }
+
+      const userData = await response.json();
+
+      setUserDetails({
+        name: userData.name,
+        email: userData.email,
+        contact_number: userData.contact_number,
+        location: userData.location,
+        id: userData.id,
+        role: userData.role,
+        created_at: userData.created_at,
+        updated_at: userData.updated_at,
+      });
+
+      // Also update edited details to match
+      setEditedDetails({
+        name: userData.name,
+        email: userData.email,
+        contact_number: userData.contact_number,
+        location: userData.location,
+        id: userData.id,
+        role: userData.role,
+        created_at: userData.created_at,
+        updated_at: userData.updated_at,
+      });
+    } catch (err) {
+      console.error("Failed to fetch user profile:", err);
+      setError("Failed to load user profile. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Toggle dropdown sections
   const toggleUserDetails = () => setIsUserDetailsOpen(!isUserDetailsOpen);
-  const toggleOrders = () => setIsOrdersOpen(!isOrdersOpen);
+
+  // Navigate to orders page
+  const goToOrders = () => {
+    navigate("/my-orders");
+  };
 
   // Handle editing user details
   const handleEditToggle = () => {
     if (isEditing) {
       // Cancel editing - reset to original values
-      setEditedDetails(userDetails);
+      setEditedDetails({ ...userDetails });
     } else {
       // Start editing
       setEditedDetails({ ...userDetails });
@@ -127,11 +128,40 @@ const MyProfile: React.FC = () => {
     setIsEditing(!isEditing);
   };
 
-  const handleSaveDetails = () => {
-    // Save edited details
-    setUserDetails({ ...editedDetails });
-    setIsEditing(false);
-    // Here you would typically make an API call to update the user details
+  const handleSaveDetails = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Authentication required");
+      }
+
+      const response = await fetch("http://localhost:8000/user/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: editedDetails.name,
+          location: editedDetails.location,
+          contact_number: editedDetails.contact_number,
+          email: editedDetails.email,
+        }),
+      });
+      if (response.status == 401) {
+        navigate("/login");
+      }
+      if (!response.ok) {
+        throw new Error(`Error updating profile: ${response.status}`);
+      }
+
+      const updatedUser = await response.json();
+      setUserDetails(updatedUser);
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Failed to update user profile:", err);
+      setError("Failed to update profile. Please try again later.");
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,46 +172,6 @@ const MyProfile: React.FC = () => {
     }));
   };
 
-  // Render the order tables
-  const renderOrderTable = (orders: OrderItem[]) => {
-    if (orders.length === 0) {
-      return <p className="no-orders">No orders found.</p>;
-    }
-
-    return (
-      <div className="order-table-container">
-        <table className="order-table">
-          <thead>
-            <tr>
-              <th>Order ID</th>
-              <th>Product</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Status</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id}>
-                <td>{order.id}</td>
-                <td>{order.product}</td>
-                <td>${order.price.toFixed(2)}</td>
-                <td>{order.quantity}</td>
-                <td>
-                  <span className={`status ${order.status.toLowerCase()}`}>
-                    {order.status}
-                  </span>
-                </td>
-                <td>{order.date}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  };
-
   return (
     <div className="profile-page">
       <Navbar />
@@ -189,149 +179,131 @@ const MyProfile: React.FC = () => {
         <div className="profile-container">
           <h1 className="profile-title">My Profile</h1>
 
-          {/* User Details Section */}
-          <div className="profile-section">
-            <div className="section-header" onClick={toggleUserDetails}>
-              <div className="header-content">
-                <User className="section-icon" />
-                <h2>User Details</h2>
-              </div>
-              {isUserDetailsOpen ? <ChevronUp /> : <ChevronDown />}
+          {loading ? (
+            <div className="loading">Loading profile...</div>
+          ) : error ? (
+            <div className="error-message">
+              <p>{error}</p>
+              <button className="retry-btn" onClick={fetchUserProfile}>
+                Retry
+              </button>
             </div>
-
-            {isUserDetailsOpen && (
-              <div className="section-content user-details-content">
-                <div className="action-buttons">
-                  {isEditing ? (
-                    <>
-                      <button
-                        className="btn save-btn"
-                        onClick={handleSaveDetails}
-                      >
-                        <Save size={16} />
-                        Save
-                      </button>
-                      <button
-                        className="btn cancel-btn secondary"
-                        onClick={handleEditToggle}
-                      >
-                        <X size={16} />
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      className="btn edit-btn secondary"
-                      onClick={handleEditToggle}
-                    >
-                      <Edit2 size={16} />
-                      Edit
-                    </button>
-                  )}
+          ) : (
+            <>
+              {/* User Details Section */}
+              <div className="profile-section">
+                <div className="section-header" onClick={toggleUserDetails}>
+                  <div className="header-content">
+                    <User className="section-icon" />
+                    <h2>User Details</h2>
+                  </div>
+                  {isUserDetailsOpen ? <ChevronUp /> : <ChevronDown />}
                 </div>
 
-                <div className="user-details-grid">
-                  <div className="form-group">
-                    <label>Name</label>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        name="name"
-                        value={editedDetails.name}
-                        onChange={handleInputChange}
-                      />
-                    ) : (
-                      <p>{userDetails.name}</p>
-                    )}
-                  </div>
+                {isUserDetailsOpen && (
+                  <div className="section-content user-details-content">
+                    <div className="action-buttons">
+                      {isEditing ? (
+                        <>
+                          <button
+                            className="btn save-btn"
+                            onClick={handleSaveDetails}
+                          >
+                            <Save size={16} />
+                            Save
+                          </button>
+                          <button
+                            className="btn cancel-btn secondary"
+                            onClick={handleEditToggle}
+                          >
+                            <X size={16} />
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          className="btn edit-btn secondary"
+                          onClick={handleEditToggle}
+                        >
+                          <Edit2 size={16} />
+                          Edit
+                        </button>
+                      )}
+                    </div>
 
-                  <div className="form-group">
-                    <label>Email</label>
-                    {isEditing ? (
-                      <input
-                        type="email"
-                        name="email"
-                        value={editedDetails.email}
-                        onChange={handleInputChange}
-                      />
-                    ) : (
-                      <p>{userDetails.email}</p>
-                    )}
-                  </div>
+                    <div className="user-details-grid">
+                      <div className="form-group">
+                        <label>Name</label>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            name="name"
+                            value={editedDetails.name}
+                            onChange={handleInputChange}
+                          />
+                        ) : (
+                          <p>{userDetails.name}</p>
+                        )}
+                      </div>
 
-                  <div className="form-group">
-                    <label>Phone</label>
-                    {isEditing ? (
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={editedDetails.phone}
-                        onChange={handleInputChange}
-                      />
-                    ) : (
-                      <p>{userDetails.phone}</p>
-                    )}
-                  </div>
+                      <div className="form-group">
+                        <label>Email</label>
+                        {isEditing ? (
+                          <input
+                            type="email"
+                            name="email"
+                            value={editedDetails.email}
+                            onChange={handleInputChange}
+                          />
+                        ) : (
+                          <p>{userDetails.email}</p>
+                        )}
+                      </div>
 
-                  <div className="form-group">
-                    <label>Address</label>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        name="address"
-                        value={editedDetails.address}
-                        onChange={handleInputChange}
-                      />
-                    ) : (
-                      <p>{userDetails.address}</p>
-                    )}
+                      <div className="form-group">
+                        <label>Phone</label>
+                        {isEditing ? (
+                          <input
+                            type="tel"
+                            name="contact_number"
+                            value={editedDetails.contact_number}
+                            onChange={handleInputChange}
+                          />
+                        ) : (
+                          <p>{userDetails.contact_number}</p>
+                        )}
+                      </div>
+
+                      <div className="form-group">
+                        <label>Address</label>
+                        {isEditing ? (
+                          <input
+                            type="text"
+                            name="location"
+                            value={editedDetails.location}
+                            onChange={handleInputChange}
+                          />
+                        ) : (
+                          <p>{userDetails.location}</p>
+                        )}
+                      </div>
+                    </div>
                   </div>
+                )}
+              </div>
+
+              {/* Orders Section - Now just a navigation button */}
+              <div className="profile-section">
+                <div className="section-header" onClick={goToOrders}>
+                  <div className="header-content">
+                    <Package className="section-icon" />
+                    <h2>My Orders</h2>
+                  </div>
+                  <ChevronDown />
                 </div>
               </div>
-            )}
-          </div>
-
-          {/* Orders Section */}
-          <div className="profile-section">
-            <div className="section-header" onClick={toggleOrders}>
-              <div className="header-content">
-                <Package className="section-icon" />
-                <h2>My Orders</h2>
-              </div>
-              {isOrdersOpen ? <ChevronUp /> : <ChevronDown />}
-            </div>
-
-            {isOrdersOpen && (
-              <div className="section-content orders-content">
-                <div className="tabs">
-                  <button
-                    className={`tab ${
-                      activeOrderTab === "current" ? "active" : ""
-                    }`}
-                    onClick={() => setActiveOrderTab("current")}
-                  >
-                    <Package size={16} />
-                    Current Orders
-                  </button>
-                  <button
-                    className={`tab ${
-                      activeOrderTab === "history" ? "active" : ""
-                    }`}
-                    onClick={() => setActiveOrderTab("history")}
-                  >
-                    <Clock size={16} />
-                    Order History
-                  </button>
-                </div>
-
-                <div className="tab-content">
-                  {activeOrderTab === "current"
-                    ? renderOrderTable(currentOrders)
-                    : renderOrderTable(orderHistory)}
-                </div>
-              </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
       <Footer />

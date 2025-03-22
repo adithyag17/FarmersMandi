@@ -60,33 +60,42 @@ const Navbar = () => {
               About
             </Link>
           </li>
-          <li className="navbar-item navbar-buttons">
-            {isLoggedIn ? (
-              // Show logout button if token exists
-              <>
-                <li className="navbar-item">
-                  <Link to="/cart" className="nav-link">
-                    Cart
-                  </Link>
-                </li>
+
+          {isLoggedIn ? (
+            // Show logout button if token exists
+            <>
+              <li className="navbar-item">
+                <Link to="/cart" className="navbar-link">
+                  Cart
+                </Link>
+              </li>
+              <li className="navbar-item">
+                <Link to="/My-profile" className="navbar-link">
+                  MyProfile
+                </Link>
+              </li>
+              <li className="navbar-item">
+                <Link to="/myorders" className="navbar-link">
+                  MyOrders
+                </Link>
+              </li>
+              <li className="navbar-item">
                 <button onClick={handleLogout} className="button secondary">
-                  <Link to="/" className="navbar-link">
-                    Logout
-                  </Link>
+                  Logout
                 </button>
-              </>
-            ) : (
-              // Show login and signup buttons if no token
-              <>
-                <Link to="/login" className="button secondary">
-                  Log In
-                </Link>
-                <Link to="/signup" className="button">
-                  Sign Up
-                </Link>
-              </>
-            )}
-          </li>
+              </li>
+            </>
+          ) : (
+            // Show login and signup buttons if no token
+            <li className="navbar-item navbar-buttons">
+              <Link to="/login" className="button secondary">
+                Log In
+              </Link>
+              <Link to="/signup" className="button">
+                Sign Up
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </nav>

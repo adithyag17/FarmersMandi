@@ -9,6 +9,8 @@ import HomePage from "./pages/HomePage";
 import CategoryPage from "./pages/CategoryPage";
 import CartPage from "./pages/CartPage";
 import MyProfile from "./pages/MyProfile";
+import MyOrdersPage from "./pages/MyOrdersPage";
+import AdminOrdersPage from "./pages/AdminOrdersPage";
 import "./styles/main.scss";
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
         <Route path="/category/:category" element={<CategoryPage />} />
         <Route path="/My-Profile" element={<MyProfile />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/myorders" element={<MyOrdersPage />} />
+        <Route path="/admin-orders" element={<AdminOrdersPage />} />
       </Routes>
     </Router>
   );

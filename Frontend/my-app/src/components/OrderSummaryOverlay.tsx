@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/components/ProductOverlay.scss";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface Product {
   id: number;
@@ -50,7 +51,7 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
   const [, setIsAdded] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   // Fetch cart data when overlay opens
   useEffect(() => {
     const fetchCartData = async () => {
@@ -67,6 +68,9 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
           "http://localhost:8000/cart",
           { headers }
         );
+        if (response.status === 401) {
+          navigate("/login");
+        }
         console.log("Cart data fetched:", response.data);
 
         // Find if current product exists in cart
@@ -118,10 +122,41 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
         headers["Authorization"] = `Bearer ${token}`;
       }
 
-      // Send the current quantity to the server
-      const items = [{ product_id: product.id, quantity }];
-      await axios.post("http://localhost:8000/cart", items, { headers });
-      console.log("Cart updated successfully:", items);
+      // First, get the current cart state
+      const currentCartResponse = await axios.get<CartResponse>(
+        "http://localhost:8000/cart",
+        { headers }
+      );
+      if (currentCartResponse.status == 401) {
+        navigate("/login");
+      }
+      // Create a map of existing products for easier manipulation
+      const existingProducts = new Map();
+      currentCartResponse.data.products.forEach((item) => {
+        existingProducts.set(item.product_id, item.quantity);
+      });
+
+      // Update the quantity for the current product
+      existingProducts.set(product.id, quantity);
+
+      // Remove products with zero quantity
+      if (quantity === 0) {
+        existingProducts.delete(product.id);
+      }
+
+      // Convert back to the format expected by the API
+      const updatedCartItems = Array.from(existingProducts.entries()).map(
+        ([productId, qty]) => ({
+          product_id: productId,
+          quantity: qty,
+        })
+      );
+
+      // Send the complete updated cart to the server
+      await axios.post("http://localhost:8000/cart", updatedCartItems, {
+        headers,
+      });
+      console.log("Cart updated successfully:", updatedCartItems);
 
       // Update local state after successful server update
       onAddToCart(product, quantity);
@@ -133,7 +168,11 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
     }
   };
 
-  // Remove item from cart
+  // Navigate to cart page
+  const handleViewCart = () => {
+    navigate("/cart");
+    onClose(); // Close the overlay when navigating away
+  };
 
   if (!product) return null;
 
@@ -205,6 +244,11 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
                     >
                       +
                     </button>
+
+                    {/* Cart icon instead of view cart button */}
+                    <div className="cart-icon" onClick={handleViewCart}>
+                      <i className="fas fa-shopping-cart"></i>
+                    </div>
                   </div>
 
                   <div className="button-container">

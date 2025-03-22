@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // In src/contexts/CartContext.tsx, make sure your Product interface matches the one used in HomePage
 interface Product {
@@ -55,7 +56,7 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   // Get auth headers for API requests
   const getHeaders = () => {
     const headers: Record<string, string> = {
@@ -83,6 +84,9 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
       const response = await axios.get("http://localhost:8000/cart", {
         headers: getHeaders(),
       });
+      if (response.status === 401) {
+        navigate("/login");
+      }
 
       // Transform API response to our CartItem format
       // This depends on your API response structure

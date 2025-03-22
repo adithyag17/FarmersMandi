@@ -43,8 +43,12 @@ class CartRepository(BaseRepository[Cart, CartCreate, CartUpdate]):
             if product_id in product_map:
                 # Update quantity of existing product
                 product_map[product_id]['quantity'] += item_dict['quantity']
+                
+                # Remove product if quantity becomes zero or negative
+                if product_map[product_id]['quantity'] <= 0:
+                    del product_map[product_id]
             else:
-                # Append new product
+                # Append new product only if quantity is positive
                 if item_dict['quantity'] > 0:
                     product_map[product_id] = item_dict
 
@@ -61,7 +65,6 @@ class CartRepository(BaseRepository[Cart, CartCreate, CartUpdate]):
         db.commit()
         db.refresh(db_obj)
         return db_obj
-
 
 
     def clear_cart(self, db: Session, *, user_id: int) -> bool:

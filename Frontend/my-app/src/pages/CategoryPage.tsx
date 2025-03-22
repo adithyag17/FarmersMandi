@@ -1,7 +1,7 @@
 // src/pages/CategoryPage.tsx
 
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductOverlay from "../components/OrderSummaryOverlay";
@@ -42,7 +42,7 @@ const CategoryPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   // Product overlay states
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showProductOverlay, setShowProductOverlay] = useState(false);
@@ -57,7 +57,9 @@ const CategoryPage = () => {
         const response = await fetch(
           `http://localhost:8000/product/category/${category}`
         );
-
+        if (response.status == 401) {
+          navigate("/login");
+        }
         if (!response.ok) {
           throw new Error(`Error fetching products: ${response.status}`);
         }
