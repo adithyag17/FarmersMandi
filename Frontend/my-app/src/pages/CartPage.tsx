@@ -233,28 +233,29 @@ const CartPage = () => {
       );
       setCartItems(updatedCartItems);
 
-      // Format the complete cart data for the API
-      const cartUpdateData = updatedCartItems.map((item) => ({
-        product_id: item.product.id,
-        quantity: item.quantity,
-      }));
+      // Send only the product_id to the new /remove_item API
+      const response = await axios.post(
+        `${CART_API_URL}/remove_item`, // Use the new route
+        { product_id: productId }, // Send only product_id
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      // Send the complete cart data to the backend
-      const response = await axios.post(CART_API_URL, cartUpdateData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
       if (response.status === 401) {
         navigate("/login");
       }
     } catch (err) {
       console.error("Error removing item:", err);
       setError("Failed to remove item. Please try again.");
+
       // Revert to previous state if API call fails
       await fetchCartItems();
     }
   };
+
   const calculateSubtotal = () => {
     return cartItems.reduce(
       (total, item) => total + item.product.price * item.quantity,

@@ -19,3 +19,11 @@ def create_or_update_cart(db: Session, user_id: int, items: List[CartItemBase]) 
 
 def clear_cart(db: Session, user_id: int) -> bool:
     return cart_repository.clear_cart(db, user_id=user_id)
+
+def remove_item_from_cart(db: Session, user_id: int, product_id: int) -> Cart:
+    existing_cart = cart_repository.get_by_user(db, user_id=user_id)
+    
+    if not existing_cart:
+        return None  # Cart not found
+    
+    return cart_repository.remove_item(db, db_obj=existing_cart, product_id=product_id)

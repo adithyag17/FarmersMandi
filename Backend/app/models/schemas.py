@@ -31,7 +31,8 @@ class UserInDB(UserBase):
 
 class User(UserInDB):
     pass
-
+class RemoveItemRequest(BaseModel):
+    product_id: int
 # Authentication Schemas
 class Token(BaseModel):
     access_token: str

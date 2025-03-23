@@ -36,21 +36,11 @@ class CartRepository(BaseRepository[Cart, CartCreate, CartUpdate]):
         # Create a dictionary for fast lookup of existing products
         product_map = {item['product_id']: item for item in existing_products}
 
+        # Replace existing products with new ones
         for new_item in obj_in.products:
             item_dict = new_item.dict()
             product_id = item_dict['product_id']
-
-            if product_id in product_map:
-                # Update quantity of existing product
-                product_map[product_id]['quantity'] += item_dict['quantity']
-                
-                # Remove product if quantity becomes zero or negative
-                if product_map[product_id]['quantity'] <= 0:
-                    del product_map[product_id]
-            else:
-                # Append new product only if quantity is positive
-                if item_dict['quantity'] > 0:
-                    product_map[product_id] = item_dict
+            product_map[product_id] = item_dict  # Replace instead of adding quantity
 
         # Convert back to list
         db_obj.products = list(product_map.values())
@@ -67,6 +57,7 @@ class CartRepository(BaseRepository[Cart, CartCreate, CartUpdate]):
         return db_obj
 
 
+
     def clear_cart(self, db: Session, *, user_id: int) -> bool:
         cart = self.get_by_user(db, user_id=user_id)
         if cart:
@@ -75,6 +66,27 @@ class CartRepository(BaseRepository[Cart, CartCreate, CartUpdate]):
             db.commit()
             return True
         return False
+
+    def remove_item(self, db: Session, *, db_obj: Cart, product_id: int) -> Cart:
+        # Ensure products is a list
+        existing_products = db_obj.products if isinstance(db_obj.products, list) else []
+
+        # Filter out the product to be removed
+        updated_products = [item for item in existing_products if item["product_id"] != product_id]
+
+        # Update the cart
+        db_obj.products = updated_products
+
+        # Mark column as modified for SQLAlchemy
+        flag_modified(db_obj, "products")
+
+        # Reset expiry
+        db_obj.expires_at = datetime.now() + timedelta(days=7)
+
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
 
 # Create instance
 cart_repository = CartRepository(Cart)
