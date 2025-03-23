@@ -1,4 +1,5 @@
 // Updated styles for OrderSummaryOverlay.scss with cart icon
+@use "sass:color";
 
 .overlay-container {
   position: fixed;
@@ -341,7 +342,7 @@
   flex: 1;
 
   &:hover:not(:disabled) {
-    background-color: #388e3c;
+    background-color: color.adjust(#4caf50, $lightness: -10%);
   }
 }
 

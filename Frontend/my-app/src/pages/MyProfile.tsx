@@ -113,7 +113,7 @@ const MyProfile: React.FC = () => {
 
   // Navigate to orders page
   const goToOrders = () => {
-    navigate("/my-orders");
+    navigate("/myorders");
   };
 
   // Handle editing user details

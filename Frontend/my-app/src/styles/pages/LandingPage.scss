@@ -1,6 +1,6 @@
 // src/styles/pages/LandingPage.scss
-
-@import "../variables";
+@use "sass:color";
+@use "../variables" as *;
 
 .landing-page {
   // Add padding-top to account for fixed navbar
@@ -11,8 +11,8 @@
   padding: $spacing-xxl 0;
   background: linear-gradient(
     135deg,
-    lighten($primary-color, 35%),
-    lighten($secondary-color, 35%)
+    color.adjust($primary-color, $lightness: 35%),
+    color.adjust($secondary-color, $lightness: 35%)
   );
 
   .container {
@@ -43,7 +43,7 @@
 
   &-subtitle {
     font-size: $font-size-lg;
-    color: lighten($dark-text, 15%);
+    color: color.adjust($dark-text, $lightness: 15%);
     margin-bottom: $spacing-lg;
     max-width: 500px;
 
@@ -85,7 +85,7 @@
       width: 100%;
       max-width: 400px;
       height: 300px;
-      background-color: lighten($primary-color, 25%);
+      background-color: color.adjust($primary-color, $lightness: 25%);
       border-radius: $border-radius-lg;
       display: flex;
       align-items: center;
@@ -143,13 +143,13 @@
   }
 
   &-description {
-    color: lighten($dark-text, 20%);
+    color: color.adjust($dark-text, $lightness: 20%);
   }
 }
 
 .how-it-works {
   padding: $spacing-xxl 0;
-  background-color: lighten($primary-color, 38%);
+  background-color: color.adjust($primary-color, $lightness: 38%);
 
   .steps {
     display: flex;
@@ -186,7 +186,7 @@
   }
 
   &-description {
-    color: lighten($dark-text, 20%);
+    color: color.adjust($dark-text, $lightness: 20%);
   }
 }
 
@@ -210,7 +210,7 @@
     color: $secondary-color;
 
     &:hover {
-      background-color: darken($light-text, 10%);
+      background-color: color.adjust($light-text, $lightness: -10%);
     }
   }
 }

@@ -1,9 +1,9 @@
 // src/styles/components/Footer.scss
-
-@import "../variables";
+@use "sass:color";
+@use "../variables" as *;
 
 .footer {
-  background-color: darken($light-bg, 5%);
+  background-color: color.adjust($light-bg, $lightness: -5%);
   padding: $spacing-xl 0 $spacing-lg;
   margin-top: $spacing-xxl;
 
@@ -36,7 +36,7 @@
   }
 
   &-description {
-    color: lighten($dark-text, 20%);
+    color: color.adjust($dark-text, $lightness: 20%);
     margin-bottom: $spacing-md;
   }
 
@@ -50,7 +50,7 @@
     }
 
     a {
-      color: lighten($dark-text, 20%);
+      color: color.adjust($dark-text, $lightness: 20%);
       transition: color $transition-fast;
 
       &:hover {
@@ -61,9 +61,9 @@
 
   &-bottom {
     text-align: center;
-    border-top: 1px solid lighten($border-color, 5%);
+    border-top: 1px solid color.adjust($border-color, $lightness: 5%);
     padding-top: $spacing-lg;
-    color: lighten($dark-text, 30%);
+    color: color.adjust($dark-text, $lightness: 30%);
     font-size: $font-size-sm;
   }
 }

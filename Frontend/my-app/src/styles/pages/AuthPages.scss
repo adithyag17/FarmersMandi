@@ -1,6 +1,7 @@
 // src/styles/pages/AuthPages.scss
 
-@import "../variables";
+@use "../variables" as *;
+@use "sass:color";
 
 .auth-page {
   padding-top: 70px;
@@ -123,11 +124,11 @@
 }
 
 .error-alert {
-  background-color: lighten($error-color, 35%);
+  background-color: color.adjust($error-color, $lightness: 35%);
   color: $error-color;
   padding: $spacing-sm $spacing-md;
   border-radius: $border-radius-md;
   margin-bottom: $spacing-lg;
   font-size: $font-size-sm;
-  border: 1px solid lighten($error-color, 20%);
+  border: 1px solid color.adjust($error-color, $lightness: 20%);
 }

@@ -1,5 +1,5 @@
 /* src/styles/pages/MyOrdersPage.scss */
-@import "../variables";
+@use "../variables" as *;
 
 .my-orders-page {
   min-height: 100vh;

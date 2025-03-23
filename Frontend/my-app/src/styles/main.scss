@@ -1,7 +1,7 @@
 // src/styles/main.scss
-
+@use "sass:color";
+@use "variables" as *;
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
-@import "variables";
 
 * {
   margin: 0;
@@ -74,7 +74,7 @@ button,
   transition: background-color $transition-fast;
 
   &:hover {
-    background-color: darken($primary-color, 10%);
+    background-color: color.adjust($primary-color, $lightness: -10%);
   }
 
   &.secondary {

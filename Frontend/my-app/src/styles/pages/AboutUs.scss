@@ -1,6 +1,6 @@
 // src/styles/pages/AboutUs.scss
-
-@import "../variables";
+@use "../variables" as *;
+@use "sass:color";
 
 .about-page {
   .container {
@@ -242,7 +242,7 @@
         color: white;
 
         &:hover {
-          background-color: darken(#4caf50, 10%);
+          background-color: color.adjust(#4caf50, $lightness: -10%);
         }
       }
 

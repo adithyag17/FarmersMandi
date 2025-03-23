@@ -1,5 +1,5 @@
 /* src/styles/pages/CategoryPage.scss */
-@import "../variables";
+@use "../variables" as *;
 
 .category-page {
   min-height: 100vh;

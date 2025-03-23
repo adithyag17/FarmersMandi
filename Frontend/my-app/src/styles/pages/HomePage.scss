@@ -1,5 +1,5 @@
 /* src/styles/pages/HomePage.scss */
-@import "../variables";
+@use "../variables" as *;
 
 // Mobile-first approach - base styles are for mobile
 .home-page {

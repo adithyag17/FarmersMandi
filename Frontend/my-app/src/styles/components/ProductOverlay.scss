@@ -1,5 +1,6 @@
 /* src/styles/components/ProductOverlay.scss */
-@import "../variables";
+@use "sass:color";
+@use "../variables" as *;
 
 .product-overlay-wrapper {
   position: fixed;
@@ -138,7 +139,7 @@
       background-color: $secondary-color;
 
       &:hover {
-        background-color: darken($secondary-color, 10%);
+        background-color: color.adjust($secondary-color, $lightness: -10%);
       }
     }
   }
@@ -168,7 +169,7 @@
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: darken($secondary-color, 10%);
+      background-color: color.adjust($secondary-color, $lightness: -10%);
     }
   }
 

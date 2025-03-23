@@ -1,4 +1,5 @@
-@import "../variables";
+@use "../variables" as *;
+@use "sass:color";
 
 // Profile Page
 .profile-page {
@@ -98,7 +99,7 @@
   @keyframes fadeIn {
     from {
       opacity: 0;
-      transform: translateY(-$spacing-sm);
+      transform: translateY((-$spacing-sm));
     }
     to {
       opacity: 1;
@@ -138,7 +139,7 @@
       background-color: $primary-color;
 
       &:hover {
-        background-color: darken($primary-color, 10%);
+        background-color: color.adjust($primary-color, $lightness: -10%);
       }
     }
 
@@ -179,14 +180,14 @@
   .tabs {
     display: flex;
     border-bottom: 1px solid $border-color;
-    margin: -$spacing-xl -$spacing-xl $spacing-lg -$spacing-xl;
+    margin: (-$spacing-xl) (-$spacing-xl) $spacing-lg (-$spacing-xl);
     padding-top: 1.5rem;
     @media (max-width: $breakpoint-md) {
-      margin: -$spacing-lg -$spacing-lg $spacing-md -$spacing-lg;
+      margin: (-$spacing-lg) (-$spacing-lg) $spacing-md (-$spacing-lg);
     }
 
     @media (max-width: $breakpoint-sm) {
-      margin: -$spacing-md -$spacing-md $spacing-md -$spacing-md;
+      margin: (-$spacing-md) (-$spacing-md) $spacing-md (-$spacing-md);
       flex-direction: column;
     }
 
@@ -255,11 +256,11 @@
 
   .order-table-container {
     overflow-x: auto;
-    margin: 0 -$spacing-xs;
+    margin: 0 (-$spacing-xs);
     padding-top: 3rem;
 
     @media (max-width: $breakpoint-md) {
-      margin: 0 -$spacing-sm;
+      margin: 0 (-$spacing-sm);
     }
   }
 

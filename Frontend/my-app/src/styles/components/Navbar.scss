@@ -1,6 +1,5 @@
 // src/styles/components/Navbar.scss
-
-@import "../variables";
+@use "../variables" as *;
 
 .navbar {
   background-color: $light-bg;

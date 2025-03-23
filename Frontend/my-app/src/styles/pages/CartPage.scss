@@ -1,5 +1,5 @@
 /* src/styles/pages/CartPage.scss */
-@import "../variables";
+@use "../variables" as *;
 
 .cart-page {
   min-height: 100vh;
