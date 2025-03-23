@@ -153,9 +153,16 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
       );
 
       // Send the complete updated cart to the server
-      await axios.post("http://localhost:8000/cart", updatedCartItems, {
-        headers,
-      });
+      const response = await axios.post(
+        "http://localhost:8000/cart",
+        updatedCartItems,
+        {
+          headers,
+        }
+      );
+      if (response.status === 401) {
+        navigate("/login");
+      }
       console.log("Cart updated successfully:", updatedCartItems);
 
       // Update local state after successful server update
@@ -203,7 +210,7 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
 
         <div className="product-overlay-content">
           <div className="product-overlay-image">
-            <img src={product.image} alt={product.name} />
+            <img src={"https://iili.io/3IKKRjf.jpg"} alt={product.name} />
           </div>
 
           <div className="product-overlay-details">

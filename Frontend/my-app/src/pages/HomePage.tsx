@@ -1,7 +1,7 @@
 // src/pages/HomePage.tsx
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductOverlay from "../components/OrderSummaryOverlay";
@@ -62,7 +62,7 @@ const HomePage = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showProductOverlay, setShowProductOverlay] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -87,6 +87,9 @@ const HomePage = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        if (response.status === 401) {
+          navigate("/login");
+        }
 
         if (response.ok) {
           const cartData = await response.json();
@@ -278,7 +281,7 @@ const HomePage = () => {
       onClick={() => handleProductClick(product)}
     >
       <div className="product-image">
-        <img src={product.image} alt={product.name} />
+        <img src={"https://iili.io/3IKKRjf.jpg"} alt={product.name} />
       </div>
       <div className="product-info">
         <h3 className="product-name">{product.name}</h3>

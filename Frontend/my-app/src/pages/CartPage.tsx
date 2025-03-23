@@ -203,11 +203,14 @@ const CartPage = () => {
       }));
 
       // Send the complete cart data to the backend
-      await axios.post(CART_API_URL, cartUpdateData, {
+      const response = await axios.post(CART_API_URL, cartUpdateData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      if (response.status === 401) {
+        navigate("/login");
+      }
     } catch (err) {
       console.error("Error updating cart:", err);
       setError("Failed to update cart. Please try again.");
@@ -238,11 +241,14 @@ const CartPage = () => {
       }));
 
       // Send the complete cart data to the backend
-      await axios.post(CART_API_URL, cartUpdateData, {
+      const response = await axios.post(CART_API_URL, cartUpdateData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      if (response.status === 401) {
+        navigate("/login");
+      }
     } catch (err) {
       console.error("Error removing item:", err);
       setError("Failed to remove item. Please try again.");
@@ -330,7 +336,7 @@ const CartPage = () => {
       }
 
       console.log("Clearing cart...");
-      await axios.post(
+      const response = await axios.post(
         `${CART_API_URL}/clear`,
         {},
         {
@@ -339,6 +345,9 @@ const CartPage = () => {
           },
         }
       );
+      if (response.status === 401) {
+        navigate("/login");
+      }
 
       setCartItems([]);
       setError(null);
