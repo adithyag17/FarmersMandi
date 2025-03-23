@@ -41,7 +41,7 @@ const MyProfile: React.FC = () => {
   // State for loading and error handling
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   // State for edit mode
   const [isEditing, setIsEditing] = useState(false);
   const [editedDetails, setEditedDetails] = useState<UserDetails>(userDetails);
@@ -62,7 +62,7 @@ const MyProfile: React.FC = () => {
         throw new Error("Authentication required");
       }
 
-      const response = await fetch("http://localhost:8000/user/profile", {
+      const response = await fetch(`${API_BASE_URL}/user/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -135,7 +135,7 @@ const MyProfile: React.FC = () => {
         throw new Error("Authentication required");
       }
 
-      const response = await fetch("http://localhost:8000/user/profile", {
+      const response = await fetch(`${API_BASE_URL}/user/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

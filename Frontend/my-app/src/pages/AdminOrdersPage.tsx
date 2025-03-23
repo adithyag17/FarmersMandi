@@ -31,6 +31,7 @@ const AdminOrdersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [paymentDetails, setPaymentDetails] = useState<{
     [key: number]: string;
   }>({});
@@ -58,7 +59,7 @@ const AdminOrdersPage = () => {
         throw new Error("Authentication required");
       }
 
-      const response = await fetch("http://localhost:8000/order", {
+      const response = await fetch(`${API_BASE_URL}/order`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -105,7 +106,7 @@ const AdminOrdersPage = () => {
 
       // Corrected endpoint URL format to match backend implementation
       const response = await fetch(
-        `http://localhost:8000/admin/AuthoriseDelivery/${orderId}`,
+        `${API_BASE_URL}/admin/AuthoriseDelivery/${orderId}`,
         {
           method: "POST",
           headers: {

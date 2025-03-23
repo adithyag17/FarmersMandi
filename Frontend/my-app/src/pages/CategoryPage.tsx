@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { env } from "../config/environment";
 import ProductOverlay from "../components/OrderSummaryOverlay";
 import "../styles/pages/CategoryPage.scss";
 
@@ -47,7 +48,7 @@ const CategoryPage = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showProductOverlay, setShowProductOverlay] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -55,7 +56,7 @@ const CategoryPage = () => {
         setError(null);
 
         const response = await fetch(
-          `http://localhost:8000/product/category/${category}`
+          `${API_BASE_URL}/product/category/${category}`
         );
         if (response.status == 401) {
           navigate("/login");
@@ -149,7 +150,7 @@ const CategoryPage = () => {
   const ProductCard = ({ product }: { product: Product }) => (
     <div className="product-card" onClick={() => handleProductClick(product)}>
       <div className="product-image">
-        <img src={product.image} alt={product.name} />
+        <img src={"https://iili.io/3IKKRjf.jpg"} alt={product.name} />
       </div>
       <div className="product-info">
         <h3 className="product-name">{product.name}</h3>

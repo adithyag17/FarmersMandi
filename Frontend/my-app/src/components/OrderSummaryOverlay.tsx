@@ -52,6 +52,7 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
   const [isUpdating, setIsUpdating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   // Fetch cart data when overlay opens
   useEffect(() => {
     const fetchCartData = async () => {
@@ -64,10 +65,9 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
           Authorization: `Bearer ${token}`,
         };
 
-        const response = await axios.get<CartResponse>(
-          "http://localhost:8000/cart",
-          { headers }
-        );
+        const response = await axios.get<CartResponse>(`${API_BASE_URL}/cart`, {
+          headers,
+        });
         if (response.status === 401) {
           navigate("/login");
         }
@@ -124,7 +124,7 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
 
       // First, get the current cart state
       const currentCartResponse = await axios.get<CartResponse>(
-        "http://localhost:8000/cart",
+        `${API_BASE_URL}/cart`,
         { headers }
       );
       if (currentCartResponse.status == 401) {
@@ -154,7 +154,7 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
 
       // Send the complete updated cart to the server
       const response = await axios.post(
-        "http://localhost:8000/cart",
+        `${API_BASE_URL}/cart`,
         updatedCartItems,
         {
           headers,

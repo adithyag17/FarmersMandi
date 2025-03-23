@@ -33,6 +33,7 @@ const MyOrdersPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -45,7 +46,7 @@ const MyOrdersPage = () => {
           throw new Error("Authentication required");
         }
 
-        const response = await fetch("http://localhost:8000/order", {
+        const response = await fetch(`${API_BASE_URL}/order`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

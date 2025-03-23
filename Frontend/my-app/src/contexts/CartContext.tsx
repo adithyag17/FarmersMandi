@@ -57,6 +57,7 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   // Get auth headers for API requests
   const getHeaders = () => {
     const headers: Record<string, string> = {
@@ -81,7 +82,7 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
     setError(null);
 
     try {
-      const response = await axios.get("http://localhost:8000/cart", {
+      const response = await axios.get(`${API_BASE_URL}/cart`, {
         headers: getHeaders(),
       });
       if (response.status === 401) {
@@ -120,7 +121,7 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
 
     try {
       const items = [{ product_id: product.id, quantity }];
-      await axios.post("http://localhost:8000/cart", items, {
+      await axios.post(`${API_BASE_URL}/cart`, items, {
         headers: getHeaders(),
       });
 
@@ -153,7 +154,7 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
 
     try {
       const items = [{ product_id: productId, quantity: 0 }];
-      await axios.post("http://localhost:8000/cart", items, {
+      await axios.post(`${API_BASE_URL}/cart`, items, {
         headers: getHeaders(),
       });
 
@@ -174,7 +175,7 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
 
     try {
       await axios.post(
-        "http://localhost:8000/cart/clear",
+        `${API_BASE_URL}/cart/clear`,
         {},
         {
           headers: getHeaders(),
@@ -198,7 +199,7 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
 
     try {
       const items = [{ product_id: productId, quantity }];
-      await axios.post("http://localhost:8000/cart", items, {
+      await axios.post(`${API_BASE_URL}/cart`, items, {
         headers: getHeaders(),
       });
 

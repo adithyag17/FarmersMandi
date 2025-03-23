@@ -50,18 +50,17 @@ interface CartResponse {
   created_at: string;
 }
 
-// API URLs
-const CART_API_URL = "http://localhost:8000/cart";
-const PRODUCT_API_URL = "http://localhost:8000/product";
-const ORDER_API_URL = "http://localhost:8000/order";
-
 const CartPage = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const navigate = useNavigate();
-
+  // API URLs
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const CART_API_URL = `${API_BASE_URL}/cart`;
+  const PRODUCT_API_URL = `${API_BASE_URL}/product`;
+  const ORDER_API_URL = `${API_BASE_URL}/order`;
   // Function to fetch a single product by ID
   const fetchProductById = async (productId: number) => {
     try {
@@ -375,7 +374,10 @@ const CartPage = () => {
               {cartItems.map((item) => (
                 <div className="cart-item" key={item.product.id}>
                   <div className="item-image">
-                    <img src={item.product.image} alt={item.product.name} />
+                    <img
+                      src={"https://iili.io/3IKKRjf.jpg"}
+                      alt={item.product.name}
+                    />
                   </div>
                   <div className="item-details">
                     <div className="item-info">

@@ -66,7 +66,7 @@ const HomePage = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showProductOverlay, setShowProductOverlay] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   // State for all products (fetched once)
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [productsByCategory, setProductsByCategory] = useState<
@@ -82,7 +82,7 @@ const HomePage = () => {
       if (!token) return;
 
       try {
-        const response = await fetch("http://localhost:8000/cart", {
+        const response = await fetch(`${API_BASE_URL}/cart`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -147,7 +147,7 @@ const HomePage = () => {
       try {
         setLoading(true);
         // Make a single API call to get all products
-        const response = await fetch("http://localhost:8000/product");
+        const response = await fetch(`${API_BASE_URL}/product`);
 
         if (!response.ok) {
           throw new Error(
