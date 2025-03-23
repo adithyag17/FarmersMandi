@@ -10,7 +10,6 @@ httpx==0.25.1
 bcrypt==4.0.1
 pydantic
 pydantic-settings
-pandas==2.0.3
 psycopg2-binary
-
-
+pandas==2.0.3
+numpy==1.24.4  # Use a stable version compatible with Pandas
