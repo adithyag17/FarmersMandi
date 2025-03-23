@@ -25,6 +25,12 @@ interface Order {
   updated_at: string;
 }
 
+// Interface for payment details to avoid using 'any'
+interface PaymentDetails {
+  payment_method?: string;
+  [key: string]: unknown;
+}
+
 const AdminOrdersPage = () => {
   const [pendingOrders, setPendingOrders] = useState<Order[]>([]);
   const [deliveredOrders, setDeliveredOrders] = useState<Order[]>([]);
@@ -41,11 +47,6 @@ const AdminOrdersPage = () => {
   const [updateSuccess, setUpdateSuccess] = useState<{
     [key: number]: boolean;
   }>({});
-
-  // Fetch all orders on component mount
-  useEffect(() => {
-    fetchOrders();
-  }, []);
 
   // Function to fetch orders from the backend
   const fetchOrders = async () => {
@@ -94,6 +95,11 @@ const AdminOrdersPage = () => {
       setLoading(false);
     }
   };
+
+  // Fetch all orders on component mount
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]); // Added fetchOrders to the dependency array
 
   const updateOrderStatus = async (orderId: number) => {
     try {
@@ -207,7 +213,7 @@ const AdminOrdersPage = () => {
       typeof paymentDetails === "object" &&
       "payment_method" in paymentDetails
     ) {
-      return (paymentDetails as any).payment_method;
+      return (paymentDetails as PaymentDetails).payment_method || "Online";
     }
 
     return "Online"; // Default case

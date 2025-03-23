@@ -7,11 +7,50 @@ import Footer from "../components/Footer";
 import { signup } from "../services/authService";
 import "../styles/pages/AuthPages.scss";
 
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  contactNumber: string;
+  location: string;
+  agreeTerms: boolean;
+}
+
+interface FormErrors {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  contactNumber: string;
+  location: string;
+  agreeTerms: string;
+  general: string;
+}
+
+interface SignupData {
+  name: string;
+  email: string;
+  password: string;
+  contact_number?: string;
+  location?: string;
+  role: number;
+}
+
+interface ApiError {
+  response?: {
+    data?: {
+      detail?: string;
+    };
+  };
+  message: string;
+}
+
 const SignupPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     password: "",
@@ -21,7 +60,7 @@ const SignupPage = () => {
     agreeTerms: false,
   });
 
-  const [errors, setErrors] = useState({
+  const [errors, setErrors] = useState<FormErrors>({
     name: "",
     email: "",
     password: "",
@@ -36,7 +75,8 @@ const SignupPage = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
+    const checked =
+      type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
 
     setFormData((prev) => ({
       ...prev,
@@ -44,7 +84,7 @@ const SignupPage = () => {
     }));
 
     // Clear error when user starts typing
-    if (errors[name as keyof typeof errors]) {
+    if (name in errors && errors[name as keyof FormErrors]) {
       setErrors((prev) => ({
         ...prev,
         [name]: "",
@@ -52,7 +92,7 @@ const SignupPage = () => {
     }
   };
 
-  const validate = () => {
+  const validate = (): boolean => {
     let isValid = true;
     const newErrors = { ...errors };
 
@@ -110,28 +150,37 @@ const SignupPage = () => {
       setIsLoading(true);
       try {
         // Prepare data for API (excluding confirmPassword and agreeTerms)
-        const userData = {
+        const userData: SignupData = {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          contact_number: formData.contactNumber || undefined,
-          location: formData.location || undefined,
           role: 2, // Default role
         };
+
+        // Add optional fields only if they have values
+        if (formData.contactNumber) {
+          userData.contact_number = formData.contactNumber;
+        }
+
+        if (formData.location) {
+          userData.location = formData.location;
+        }
 
         // Call signup service
         await signup(userData);
 
         // Redirect to dashboard or home page
         navigate("/login");
-      } catch (error: any) {
+      } catch (error) {
         // Handle different error scenarios
-        if (error.response && error.response.data) {
+        const apiError = error as ApiError;
+
+        if (apiError.response?.data?.detail) {
           // API returned an error message
           setErrors({
             ...errors,
             general:
-              error.response.data.detail ||
+              apiError.response.data.detail ||
               "Registration failed. Please try again.",
           });
         } else {
@@ -189,7 +238,7 @@ const SignupPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="contactNumber">Contact Number </label>
+              <label htmlFor="contactNumber">Contact Number</label>
               <input
                 type="tel"
                 id="contactNumber"
@@ -205,7 +254,7 @@ const SignupPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="location">Address </label>
+              <label htmlFor="location">Address</label>
               <textarea
                 id="location"
                 name="location"

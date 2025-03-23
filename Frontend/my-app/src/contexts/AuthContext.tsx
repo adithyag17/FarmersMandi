@@ -2,47 +2,63 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { getToken, getCurrentUser, logout } from "../services/authService";
 
-interface AuthContextType {
-  isAuthenticated: boolean;
-  user: Record<string, unknown> | null;
-  loading: boolean;
-  logout: () => void;
-  setUser: (user: Record<string, unknown> | null) => void;
+// Define a proper user type instead of using Record<string, unknown>
+interface User {
+  id?: string | number;
+  [key: string]: any; // Allow for additional properties
 }
 
-const AuthContext = createContext<AuthContextType>({
+interface AuthContextType {
+  isAuthenticated: boolean;
+  user: User | null;
+  loading: boolean;
+  logout: () => void;
+  setUser: (user: User | null) => void;
+}
+
+// Default context value
+const defaultContextValue: AuthContextType = {
   isAuthenticated: false,
   user: null,
   loading: true,
   logout: () => {},
   setUser: () => {},
-});
+};
+
+const AuthContext = createContext<AuthContextType>(defaultContextValue);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for token expiration if not "remember me"
-    const tokenExpiration = localStorage.getItem("tokenExpiration");
-    if (tokenExpiration && new Date().getTime() > parseInt(tokenExpiration)) {
-      // Token expired, log out user
-      handleLogout();
-      return;
-    }
+    const checkAuthStatus = () => {
+      // Check for token expiration if not "remember me"
+      const tokenExpiration = localStorage.getItem("tokenExpiration");
+      if (
+        tokenExpiration &&
+        new Date().getTime() > parseInt(tokenExpiration, 10)
+      ) {
+        // Token expired, log out user
+        handleLogout();
+        return;
+      }
 
-    // Load user from localStorage
-    const savedUser = getCurrentUser();
-    const token = getToken();
+      // Load user from localStorage
+      const savedUser = getCurrentUser();
+      const token = getToken();
 
-    if (savedUser && token) {
-      setUser(savedUser);
-    }
+      if (savedUser && token) {
+        setUser(savedUser);
+      }
 
-    setLoading(false);
+      setLoading(false);
+    };
+
+    checkAuthStatus();
   }, []);
 
   const handleLogout = () => {
@@ -51,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     navigate("/login");
   };
 
-  const value = {
+  const value: AuthContextType = {
     isAuthenticated: !!user,
     user,
     loading,
@@ -62,6 +78,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
 
 export default AuthContext;

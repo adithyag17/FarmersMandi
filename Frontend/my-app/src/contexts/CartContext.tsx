@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+// CartContext.tsx
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -16,6 +17,18 @@ interface Product {
 
 interface CartItem {
   product: Product;
+  quantity: number;
+}
+
+// Define API response structure for cart items
+interface CartProductResponse {
+  product_id: number;
+  name?: string;
+  price?: number;
+  unit?: string;
+  image?: string;
+  farmer?: string;
+  category?: string;
   quantity: number;
 }
 
@@ -47,8 +60,7 @@ const CartContext = createContext<CartContextType>({
   updateQuantity: async () => {},
 });
 
-export const useCart = () => useContext(CartContext);
-
+// CartProvider component
 export const CartProvider: React.FC<CartContextProviderProps> = ({
   children,
   token,
@@ -58,8 +70,9 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   // Get auth headers for API requests
-  const getHeaders = () => {
+  const getHeaders = useCallback(() => {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
@@ -69,10 +82,10 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
     }
 
     return headers;
-  };
+  }, [token]);
 
   // Fetch cart from API
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
     if (!token) {
       console.log("No token available, skipping cart fetch");
       return;
@@ -90,9 +103,7 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
       }
 
       // Transform API response to our CartItem format
-      // This depends on your API response structure
-      // You may need to adjust this mapping
-      const items = response.data.products.map((item: any) => ({
+      const items = response.data.products.map((item: CartProductResponse) => ({
         product: {
           id: item.product_id,
           name: item.name || "Product",
@@ -112,64 +123,70 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [API_BASE_URL, getHeaders, navigate, token]);
 
   // Add product to cart
-  const addToCart = async (product: Product, quantity: number) => {
-    setIsLoading(true);
-    setError(null);
+  const addToCart = useCallback(
+    async (product: Product, quantity: number) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const items = [{ product_id: product.id, quantity }];
-      await axios.post(`${API_BASE_URL}/cart`, items, {
-        headers: getHeaders(),
-      });
+      try {
+        const items = [{ product_id: product.id, quantity }];
+        await axios.post(`${API_BASE_URL}/cart`, items, {
+          headers: getHeaders(),
+        });
 
-      // Update local state
-      const existingItemIndex = cartItems.findIndex(
-        (item) => item.product.id === product.id
-      );
+        // Update local state
+        const existingItemIndex = cartItems.findIndex(
+          (item) => item.product.id === product.id
+        );
 
-      if (existingItemIndex !== -1) {
-        // Replace existing item with updated quantity
-        const updatedItems = [...cartItems];
-        updatedItems[existingItemIndex] = { product, quantity };
-        setCartItems(updatedItems);
-      } else {
-        // Add new item to cart
-        setCartItems([...cartItems, { product, quantity }]);
+        if (existingItemIndex !== -1) {
+          // Replace existing item with updated quantity
+          const updatedItems = [...cartItems];
+          updatedItems[existingItemIndex] = { product, quantity };
+          setCartItems(updatedItems);
+        } else {
+          // Add new item to cart
+          setCartItems([...cartItems, { product, quantity }]);
+        }
+      } catch (err) {
+        console.error("Failed to add to cart:", err);
+        setError("Failed to add item to your cart. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.error("Failed to add to cart:", err);
-      setError("Failed to add item to your cart. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [API_BASE_URL, cartItems, getHeaders]
+  );
 
   // Remove product from cart
-  const removeFromCart = async (productId: number) => {
-    setIsLoading(true);
-    setError(null);
+  const removeFromCart = useCallback(
+    async (productId: number) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const items = [{ product_id: productId, quantity: 0 }];
-      await axios.post(`${API_BASE_URL}/cart`, items, {
-        headers: getHeaders(),
-      });
+      try {
+        const items = [{ product_id: productId, quantity: 0 }];
+        await axios.post(`${API_BASE_URL}/cart`, items, {
+          headers: getHeaders(),
+        });
 
-      // Update local state
-      setCartItems(cartItems.filter((item) => item.product.id !== productId));
-    } catch (err) {
-      console.error("Failed to remove from cart:", err);
-      setError("Failed to remove item from your cart. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+        // Update local state
+        setCartItems(cartItems.filter((item) => item.product.id !== productId));
+      } catch (err) {
+        console.error("Failed to remove from cart:", err);
+        setError("Failed to remove item from your cart. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [API_BASE_URL, cartItems, getHeaders]
+  );
 
   // Clear entire cart
-  const clearCart = async () => {
+  const clearCart = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -190,44 +207,49 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [API_BASE_URL, getHeaders]);
 
   // Update item quantity
-  const updateQuantity = async (productId: number, quantity: number) => {
-    setIsLoading(true);
-    setError(null);
+  const updateQuantity = useCallback(
+    async (productId: number, quantity: number) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const items = [{ product_id: productId, quantity }];
-      await axios.post(`${API_BASE_URL}/cart`, items, {
-        headers: getHeaders(),
-      });
+      try {
+        const items = [{ product_id: productId, quantity }];
+        await axios.post(`${API_BASE_URL}/cart`, items, {
+          headers: getHeaders(),
+        });
 
-      // Update local state
-      if (quantity > 0) {
-        setCartItems(
-          cartItems.map((item) =>
-            item.product.id === productId ? { ...item, quantity } : item
-          )
-        );
-      } else {
-        // Remove item if quantity is 0
-        setCartItems(cartItems.filter((item) => item.product.id !== productId));
+        // Update local state
+        if (quantity > 0) {
+          setCartItems(
+            cartItems.map((item) =>
+              item.product.id === productId ? { ...item, quantity } : item
+            )
+          );
+        } else {
+          // Remove item if quantity is 0
+          setCartItems(
+            cartItems.filter((item) => item.product.id !== productId)
+          );
+        }
+      } catch (err) {
+        console.error("Failed to update quantity:", err);
+        setError("Failed to update your cart. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      console.error("Failed to update quantity:", err);
-      setError("Failed to update your cart. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+    [API_BASE_URL, cartItems, getHeaders]
+  );
 
   // Fetch cart on initial load and when token changes
   useEffect(() => {
     if (token) {
       fetchCart();
     }
-  }, [token]);
+  }, [token, fetchCart]);
 
   const value = {
     cartItems,
@@ -243,4 +265,7 @@ export const CartProvider: React.FC<CartContextProviderProps> = ({
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
-export default CartContext;
+// Function export moved to a separate file to fix Fast Refresh warning
+// Export the context as default
+const contextObj = { CartContext, CartProvider };
+export default contextObj;

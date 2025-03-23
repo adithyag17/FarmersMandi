@@ -14,6 +14,11 @@ interface OrderItem {
   price: number;
 }
 
+interface PaymentDetails {
+  payment_method?: string;
+  [key: string]: unknown;
+}
+
 interface Order {
   order_id: number;
   user_id: number;
@@ -21,7 +26,7 @@ interface Order {
   total_order_price: number;
   order_status: number;
   delivery_address: string;
-  payment_details: any;
+  payment_details: PaymentDetails;
   created_at: string;
   updated_at: string;
 }
@@ -34,6 +39,7 @@ const MyOrdersPage = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -51,7 +57,7 @@ const MyOrdersPage = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (response.status == 401) {
+        if (response.status === 401) {
           navigate("/login");
         }
         if (!response.ok) {
@@ -87,7 +93,7 @@ const MyOrdersPage = () => {
     };
 
     fetchOrders();
-  }, []);
+  }, [API_BASE_URL, navigate]);
 
   // Format date to a more readable format
   const formatDate = (dateString: string) => {
@@ -114,7 +120,7 @@ const MyOrdersPage = () => {
   };
 
   // Get payment method from payment details
-  const getPaymentMethod = (paymentDetails: any) => {
+  const getPaymentMethod = (paymentDetails: PaymentDetails) => {
     if (!paymentDetails || Object.keys(paymentDetails).length === 0) {
       return "Pending";
     }

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { env } from "../config/environment";
 import ProductOverlay from "../components/OrderSummaryOverlay";
 import "../styles/pages/CategoryPage.scss";
 
@@ -116,7 +115,7 @@ const CategoryPage = () => {
       const existingItemIndex = prevItems.findIndex(
         (item) => item.product.id === product.id
       );
-
+      console.log(cartItems);
       if (existingItemIndex !== -1) {
         // Update existing item
         const updatedItems = [...prevItems];
@@ -196,6 +195,7 @@ const CategoryPage = () => {
         isOpen={showProductOverlay}
         onClose={handleCloseOverlay}
         onAddToCart={handleAddToCart}
+        cartItems={cartItems}
       />
 
       <Footer />
