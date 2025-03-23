@@ -11,4 +11,6 @@ bcrypt==4.0.1
 pydantic
 pydantic-settings
 pandas==2.0.3
+psycopg2-binary
+
 
