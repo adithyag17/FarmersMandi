@@ -13,3 +13,4 @@ pydantic-settings
 psycopg2-binary
 pandas==2.0.3
 numpy==1.24.4  # Use a stable version compatible with Pandas
+pydantic[email]
