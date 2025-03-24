@@ -1,5 +1,5 @@
 🛒 Farmers Mandi
-Welcome to Farmers Mandi, the one-stop platform for Mantri Alpine residents to book fresh groceries straight from the Farmers Mandi shop to their doorstep. No more battling through grocery aisles—just tap, book, and relax while your veggies find their way home.
+Welcome to Farmers Mandi, the one-stop MOBILE FIRST platform for Mantri Alpine residents to book fresh groceries straight from the Farmers Mandi shop to their doorstep. No more battling through grocery aisles—just tap, book, and relax while your veggies find their way home.
 
 🌟 Features
 ✅ Browse and book fresh groceries online
