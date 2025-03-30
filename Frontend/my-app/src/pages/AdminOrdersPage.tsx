@@ -1,6 +1,6 @@
 // src/pages/AdminOrdersPage.tsx
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "../styles/pages/AdminOrdersPage.scss";
@@ -48,8 +48,8 @@ const AdminOrdersPage = () => {
     [key: number]: boolean;
   }>({});
 
-  // Function to fetch orders from the backend
-  const fetchOrders = async () => {
+  // Function to fetch orders from the backend - using useCallback to memoize
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -94,12 +94,12 @@ const AdminOrdersPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_BASE_URL, navigate]); // Only depend on stable values
 
   // Fetch all orders on component mount
   useEffect(() => {
     fetchOrders();
-  }, [fetchOrders]); // Added fetchOrders to the dependency array
+  }, [fetchOrders]); // Now safe because fetchOrders is memoized
 
   const updateOrderStatus = async (orderId: number) => {
     try {
