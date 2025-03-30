@@ -26,7 +26,7 @@ async def ingest_products(
     
     # Read the file content
     file_content = await file.read()
-    
+    print("hi")
     # Process the excel file
     result = ingest_products_from_excel(db, file_content)
     

@@ -1,0 +1,270 @@
+/* src/styles/pages/AdminProductUploadPage.scss */
+@use "../variables" as *;
+@use "sass:color";
+
+.admin-product-upload-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: $light-bg;
+
+  .container {
+    flex: 1;
+    padding: 15px;
+    margin: 0 auto;
+    width: 100%;
+    background-color: $light-bg;
+    max-width: 1200px;
+  }
+
+  /* Page Header */
+  .page-title {
+    margin: 20px 0 30px;
+    text-align: center;
+    padding-top: 2.2rem;
+    font-size: 28px;
+    color: $primary-color;
+    font-weight: 600;
+  }
+
+  /* Upload Section */
+  .upload-section {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+
+  /* Card Styles */
+  .upload-card,
+  .preview-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #eee;
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      color: $secondary-color;
+    }
+
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 15px;
+    }
+  }
+
+  /* Upload Form */
+  .upload-form {
+    padding: 20px;
+
+    .file-input-wrapper {
+      margin-bottom: 20px;
+
+      input[type="file"] {
+        display: none;
+      }
+
+      label {
+        display: block;
+        padding: 12px 15px;
+        background-color: #f0f0f0;
+        border: 2px dashed #ccc;
+        border-radius: 6px;
+        text-align: center;
+        cursor: pointer;
+        color: #555;
+        font-size: 16px;
+        transition: all 0.3s;
+
+        &:hover {
+          background-color: #e8e8e8;
+          border-color: #aaa;
+        }
+      }
+
+      .file-details {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+
+        p {
+          margin: 5px 0;
+          font-size: 14px;
+          color: #555;
+        }
+      }
+    }
+
+    .error-message {
+      padding: 10px;
+      background-color: #ffebee;
+      color: #c62828;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .success-message {
+      padding: 10px;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .upload-button {
+      display: block;
+      width: 100%;
+      padding: 12px 15px;
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: color.adjust($primary-color, $lightness: -5%);
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  /* Preview Card */
+  .preview-card {
+    margin-top: 20px;
+
+    .data-preview {
+      padding: 20px;
+
+      h3 {
+        margin: 0 0 15px;
+        font-size: 18px;
+        color: #444;
+      }
+
+      .preview-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        overflow-x: auto;
+        display: block;
+
+        th,
+        td {
+          padding: 10px;
+          border: 1px solid #ddd;
+          text-align: left;
+        }
+
+        th {
+          background-color: #f5f5f5;
+          font-weight: 600;
+          color: #333;
+        }
+
+        tr:nth-child(even) {
+          background-color: #f9f9f9;
+        }
+      }
+
+      .console-message {
+        margin-top: 20px;
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+
+        .console {
+          padding: 15px;
+          background-color: #f5f5f5;
+          border-radius: 4px;
+          font-family: monospace;
+          color: #333;
+
+          p {
+            margin: 5px 0;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+
+  /* Navigation Buttons */
+  .navigation-buttons {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+
+    .nav-button {
+      padding: 12px 20px;
+      background-color: $secondary-color;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin: 0 10px;
+
+      &:hover {
+        background-color: color.adjust($secondary-color, $lightness: -5%);
+      }
+    }
+  }
+
+  /* Desktop styles */
+  @media screen and (min-width: 768px) {
+    .container {
+      padding: 20px;
+    }
+
+    .page-title {
+      margin: 30px 0 40px;
+      padding-top: 3rem;
+      font-size: 32px;
+    }
+
+    .upload-section {
+      flex-direction: row;
+      flex-wrap: wrap;
+
+      .upload-card {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .preview-card {
+        flex: 2;
+        margin-top: 0;
+      }
+    }
+
+    .preview-table {
+      display: table !important;
+    }
+  }
+
+  /* Small screen styles */
+  @media screen and (max-width: 767px) {
+    .preview-card {
+      overflow-x: auto;
+    }
+  }
+}

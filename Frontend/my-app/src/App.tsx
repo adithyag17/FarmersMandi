@@ -11,6 +11,7 @@ import CartPage from "./pages/CartPage";
 import MyProfile from "./pages/MyProfile";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
+import AdminProductUploadPage from "./pages/AdminProductUploadPage";
 import "./styles/main.scss";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/myorders" element={<MyOrdersPage />} />
         <Route path="/admin-orders" element={<AdminOrdersPage />} />
+        <Route path="/admin/products" element={<AdminProductUploadPage />} />
       </Routes>
     </Router>
   );

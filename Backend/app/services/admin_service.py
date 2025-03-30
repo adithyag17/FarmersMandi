@@ -14,17 +14,15 @@ def ingest_products_from_excel(db: Session, file_content: bytes) -> Dict[str, An
         # Read Excel file
         excel_data = BytesIO(file_content)
         df = pd.read_excel(excel_data)
-        
         # Transform DataFrame to list of ProductCreate objects
         products_added = 0
         products_updated = 0
         
         for _, row in df.iterrows():
             try:
-                # Check if product already exists
-                existing_product = product_repository.get_by_id(
-                    db, product_id=int(row.get('product_id', 0))
-                )
+                existing_product = product_repository.get_by_name(
+                db, product_name=row.get('product_name', '')
+            )
                 
                 # Prepare product data
                 product_data = {
@@ -38,6 +36,8 @@ def ingest_products_from_excel(db: Session, file_content: bytes) -> Dict[str, An
                     'images': row.get('images', '').split(',') if isinstance(row.get('images'), str) else [],
                     'ratings': float(row.get('ratings', 0.0))
                 }
+                print("hi")
+                print(product_data)
                 
                 if existing_product:
                     # Update existing product

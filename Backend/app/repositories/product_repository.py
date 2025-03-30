@@ -9,6 +9,9 @@ class ProductRepository(BaseRepository[Product, ProductCreate, ProductUpdate]):
     def get_by_id(self, db: Session, *, product_id: int) -> Optional[Product]:
         return db.query(Product).filter(Product.product_id == product_id).first()
     
+    def get_by_name(self, db: Session, *, product_name: str) -> Optional[Product]:
+        return db.query(Product).filter(Product.product_name == product_name).first()
+    
     def get_by_category(self, db: Session, *, category: str, skip: int = 0, limit: int = 100) -> List[Product]:
         return db.query(Product).filter(Product.product_category == category).offset(skip).limit(limit).all()
     
