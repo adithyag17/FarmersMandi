@@ -9,6 +9,7 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   // Check for token in localStorage and fetch user profile on component mount
   useEffect(() => {
@@ -35,7 +36,7 @@ const Navbar = () => {
   const fetchUserProfile = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8000/user/profile", {
+      const response = await fetch(`${API_BASE_URL}/user/profile`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
