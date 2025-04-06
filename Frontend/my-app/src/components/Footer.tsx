@@ -1,6 +1,4 @@
 // src/components/Footer.tsx
-
-import { Link } from "react-router-dom";
 import "../styles/components/Footer.scss";
 
 const Footer = () => {
@@ -13,7 +11,7 @@ const Footer = () => {
           <div className="footer-section">
             <h3 className="footer-title">Farmers Mandi</h3>
             <p className="footer-description">
-              A simple description of your application and what it does.
+              Your One-Stop Shop for Freshness & Savings!.
             </p>
           </div>
 
@@ -22,27 +20,21 @@ const Footer = () => {
             <ul className="footer-social">
               <li>
                 <a href="#" target="_blank" rel="noopener noreferrer">
-                  Email id :
+                  Email id : adithyag020@gmail.com
                 </a>
               </li>
               <li>
                 <a href="#" target="_blank" rel="noopener noreferrer">
-                  Contact Number :
+                  Contact Number : 8618991772
                 </a>
               </li>
               <li>
                 <a href="#" target="_blank" rel="noopener noreferrer">
-                  GST In:
+                  GST In: 29AAKFF3797P1ZC
                 </a>
               </li>
-              <li>Address :</li>
-            </ul>
-          </div>
-          <div className="footer-section">
-            <h3 className="footer-title">Legal</h3>
-            <ul className="footer-links">
               <li>
-                <Link to="/terms">Terms of Service</Link>
+                Address : NO.414 & 415 Banashankari 5th stage vaddarapalya
               </li>
             </ul>
           </div>

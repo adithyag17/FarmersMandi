@@ -1,9 +1,7 @@
-// src/pages/AboutUs.tsx
-
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import "../styles/pages/AboutUs.scss"; // We'll create this stylesheet
+import "../styles/pages/AboutUs.scss";
 
 const AboutUs = () => {
   return (
@@ -14,10 +12,10 @@ const AboutUs = () => {
         <section className="hero-section">
           <h1 className="page-title">About Us</h1>
           <p className="page-subtitle">
-            Welcome to Farmers Mandi! We bridge the gap between farmers and
-            consumers by providing a simple, direct, and transparent
-            marketplace. Our mission is to support local farmers and give
-            consumers access to fresh, high-quality produce at fair prices.
+            Welcome to the official website of Farmer's Mandi Shop! Our primary
+            goal is to deliver high-quality food, groceries, and products at the
+            most competitive prices. Shop with us for fresh, reliable goods
+            straight from the source!
           </p>
         </section>
 
@@ -26,32 +24,19 @@ const AboutUs = () => {
           <div className="founders-container">
             <div className="founder-card">
               <div className="founder-image">
-                <img src="/api/placeholder/300/300" alt="John Doe" />
+                <img src="vg.png" alt="VG" />
               </div>
               <div className="founder-info">
-                <h3 className="founder-name">John Doe</h3>
-                <p className="founder-title">Co-Founder & CEO</p>
+                <h3 className="founder-name">Ganesh V</h3>
+                <p className="founder-title">Co-Founder</p>
                 <p className="founder-bio">
-                  Visionary behind the platform, with 10+ years of agricultural
-                  tech experience. John has worked extensively with farming
-                  communities across the country to understand their challenges
-                  and build solutions that address their needs.
-                </p>
-              </div>
-            </div>
-
-            <div className="founder-card">
-              <div className="founder-image">
-                <img src="/api/placeholder/300/300" alt="Jane Smith" />
-              </div>
-              <div className="founder-info">
-                <h3 className="founder-name">Jane Smith</h3>
-                <p className="founder-title">Co-Founder & CMO</p>
-                <p className="founder-bio">
-                  Marketing expert focused on promoting sustainable farming
-                  practices. Jane brings her passion for organic farming and
-                  consumer education to help build bridges between producers and
-                  conscious consumers.
+                  Meet Ganesh V, a key partner at Farmer's Mandi Shop. After
+                  years of searching for his true passion and purpose, Ganesh
+                  discovered his calling in the world of food products. From the
+                  start of his career, he dreamed of working closely with
+                  quality ingredients. An avid cook himself, Ganesh's love for
+                  food makes him the perfect person to handpick your groceries,
+                  ensuring you get nothing but the best!
                 </p>
               </div>
             </div>
@@ -63,10 +48,10 @@ const AboutUs = () => {
 
           <div className="offering-item">
             <div className="offering-content">
-              <h3 className="offering-title">Quality Products</h3>
+              <h3 className="offering-title">Quality Organic Products</h3>
               <p className="offering-description">
-                We pride ourselves on providing fresh, high-quality produce
-                directly from local farms. Every item on our platform is
+                We pride ourselves on providing fresh, high-quality organic
+                produce directly from local farms. Every item on our platform is
                 carefully selected to ensure you receive the best quality food
                 for your family. Our farmers follow sustainable practices that
                 maintain soil health and biodiversity while growing nutritious
@@ -76,35 +61,33 @@ const AboutUs = () => {
                 <li>Seasonal produce at peak freshness</li>
                 <li>Direct farm-to-table supply chain</li>
                 <li>Rigorous quality standards</li>
+                <li>Premium organic daily provisions</li>
               </ul>
-            </div>
-            <div className="offering-image">
-              <img src="/api/placeholder/400/300" alt="Quality Products" />
             </div>
           </div>
 
           <div className="offering-item reverse">
             <div className="offering-content">
-              <h3 className="offering-title">Inexpensive Pricing</h3>
+              <h3 className="offering-title">
+                Wholesale Prices, Retail Smiles!
+              </h3>
               <p className="offering-description">
-                By eliminating middlemen, we ensure fair, competitive prices
-                that benefit both farmers and consumers. Farmers earn more for
-                their hard work, while you pay less for fresh, high-quality
-                produce. Our transparent pricing model means you'll always know
-                exactly what you're paying for.
+                By eliminating middlemen, we ensure wholesale prices that are
+                significantly less compared to other shops and online vendors.
+                Farmers earn more for their hard work, while you pay less for
+                fresh, high-quality produce. Our transparent pricing model means
+                you'll always know exactly what you're paying for.
               </p>
               <ul className="offering-features">
                 <li>Up to 40% savings compared to retail prices</li>
                 <li>Subscription options for additional discounts</li>
                 <li>Bulk purchase options for families</li>
+                <li>Unbeatable wholesale rates for retail quantities</li>
               </ul>
-            </div>
-            <div className="offering-image">
-              <img src="/api/placeholder/400/300" alt="Inexpensive Pricing" />
             </div>
           </div>
 
-          <div className="offering-item">
+          {/* <div className="offering-item">
             <div className="offering-content">
               <h3 className="offering-title">Exclusive Organic Products</h3>
               <p className="offering-description">
@@ -118,31 +101,46 @@ const AboutUs = () => {
                 <li>Certified organic produce and products</li>
                 <li>Seasonal and heirloom varieties</li>
                 <li>Pesticide and GMO-free guarantee</li>
+                <li>
+                  Premium Paneer Perfection - creamy, fresh, and priced just
+                  right!
+                </li>
               </ul>
             </div>
-            <div className="offering-image">
-              <img src="/api/placeholder/400/300" alt="Organic Products" />
-            </div>
-          </div>
+          </div> */}
 
           <div className="offering-item reverse">
             <div className="offering-content">
               <h3 className="offering-title">One-Day Delivery</h3>
               <p className="offering-description">
-                Enjoy fast and reliable delivery service right to your doorstep.
-                Our logistics network is optimized to maintain the freshness of
-                produce from farm to your kitchen. We understand that freshness
-                matters, which is why we've invested in a cold chain that
-                preserves quality throughout the delivery process.
+                Enjoy fast and reliable delivery service right to your doorstep
+                with no minimum order required.
               </p>
               <ul className="offering-features">
-                <li>Same-day delivery in select areas</li>
-                <li>Temperature-controlled transportation</li>
+                <li>FREE delivery for Mantri Alpine residents</li>
+                <li>Same-day delivery service</li>
                 <li>Eco-friendly packaging options</li>
+                <li>
+                  No minimum order – we bring freshness to your doorstep,
+                  anytime, anywhere
+                </li>
               </ul>
             </div>
-            <div className="offering-image">
-              <img src="/api/placeholder/400/300" alt="Fast Delivery" />
+          </div>
+
+          <div className="offering-item">
+            <div className="offering-content">
+              <h3 className="offering-title">Homemade Specialties</h3>
+              <p className="offering-description">
+                Indulge in our range of homemade delights prepared with
+                traditional recipes and premium ingredients.
+              </p>
+              <ul className="offering-features">
+                <li>Mouthwatering pickles & condiments</li>
+                <li>Crunchy Hapala</li>
+                <li>Traditional Sandige</li>
+                <li>And many more homemade delights</li>
+              </ul>
             </div>
           </div>
         </section>
@@ -151,18 +149,30 @@ const AboutUs = () => {
           <div className="mission-content">
             <h2 className="section-title">Our Mission</h2>
             <p className="mission-text">
-              Our platform is designed to benefit both farmers and consumers,
-              making local markets more accessible, efficient, and rewarding. We
-              believe in creating a sustainable food ecosystem that supports
-              local agriculture, reduces food miles, and connects people with
-              the source of their food.
+              Our main goal is to provide quality groceries and food products at
+              the best possible rate.
             </p>
             <div className="mission-actions">
               <Link to="/signup" className="button primary">
                 Join Our Community
               </Link>
-              <Link to="/" className="button secondary">
+              <Link to="/home" className="button secondary">
                 Explore Products
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="grand-opening-section">
+          <div className="grand-opening-content">
+            <h2 className="section-title">Grand Opening Alert!</h2>
+            <p className="opening-date">14th April 2025</p>
+            <p className="opening-location">
+              Opposite Mantri Alpine Apartments
+            </p>
+            <div className="opening-actions">
+              <Link to="/home" className="button primary">
+                Order Online Now!
               </Link>
             </div>
           </div>
