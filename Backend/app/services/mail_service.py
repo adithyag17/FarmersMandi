@@ -3,6 +3,8 @@ from typing import Dict, Any, Optional, List
 from datetime import datetime
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
+import os
+
 
 def send_mail(user_email: str, admin_email: str, order_data: Dict[str, Any]) -> bool:
     """
@@ -15,8 +17,8 @@ def send_mail(user_email: str, admin_email: str, order_data: Dict[str, Any]) -> 
     """
     try:
         # Use API key directly
-        BREVO_API_KEY = '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'
-        store_name = 'Farmers Mandiiii'
+        BREVO_API_KEY = os.getenv("EMAIL_KEY")
+        store_name = os.getenv("STORE_NAME")
         sender_email = admin_email
         
         # Configure API key authorization
