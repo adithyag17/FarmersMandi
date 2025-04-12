@@ -85,6 +85,7 @@ class Product(ProductInDB):
 # Cart Schemas
 class CartItemBase(BaseModel):
     product_id: int
+    product_name: Optional[str] = None 
     quantity: int
 
 class LoginRequestObject(BaseModel):
@@ -120,6 +121,7 @@ class Cart(CartInDB):
 # Order Schemas
 class OrderItemBase(BaseModel):
     product_id: int
+    product_name: str
     quantity: int
     price: int
 

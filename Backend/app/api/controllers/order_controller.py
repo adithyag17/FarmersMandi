@@ -3,10 +3,13 @@ from sqlalchemy.orm import Session
 from typing import List
 from app.db.base import get_db
 from app.models.schemas import Order, OrderItemBase, OrderStatusUpdate, PaymentRequest, PaymentResponse
-from app.services.order_service import create_order, get_order, get_user_orders, update_order_status, process_payment
+from app.services.order_service import create_order, get_order, get_user_orders, update_order_status, process_payment, get_all_orders
 from app.services.payment_service import payment_service
 from app.api.controllers.auth_controller import oauth2_scheme
 from app.services.auth_service import get_current_user
+from app.services.mail_service import send_mail
+from app.models.models import Product
+
 
 router = APIRouter()
 
@@ -32,8 +35,12 @@ def create_new_order(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Cart is empty or user address not found"
         )
-    
+    mail_sent = send_mail(current_user.email, 'adithya.ganesh39@gmail.com', order)
+    if not mail_sent:
+        print("Failed to send order confirmation email")
     return order
+
+  # your existing DB fetch function
 
 @router.get("/", response_model=List[Order])
 def read_user_orders(
@@ -43,7 +50,7 @@ def read_user_orders(
     db: Session = Depends(get_db)
 ):
     """
-    Get current user's orders.
+    Get current user's orders with product_name injected in each product.
     """
     current_user = get_current_user(db, token)
     if not current_user:
@@ -52,7 +59,43 @@ def read_user_orders(
             detail="Invalid authentication credentials"
         )
     
+    # Step 1: Fetch user orders (each has products: List[Dict])
     orders = get_user_orders(db, user_id=current_user.id, skip=skip, limit=limit)
+
+    # Step 2: Collect all unique product_ids from all orders
+    product_ids = set()
+    for order in orders:
+        for item in order.products:
+            product_ids.add(item["product_id"])
+
+    # Step 3: Query products and build map: product_id -> product_name
+    product_map = {
+        product.product_id: product.product_name
+        for product in db.query(Product.product_id, Product.product_name)
+        .filter(Product.product_id.in_(product_ids))
+        .all()
+    }
+
+    # Step 4: Enrich each product in each order with product_name
+    for order in orders:
+        for item in order.products:
+            item["product_name"] = product_map.get(item["product_id"], "Unknown")
+
+    return orders
+
+
+@router.get("/all", response_model=List[Order])
+def get_All(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
+    current_user = get_current_user(db, token)
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials"
+        )
+    orders = get_all_orders(db)
     return orders
 
 @router.get("/{order_id}", response_model=Order)

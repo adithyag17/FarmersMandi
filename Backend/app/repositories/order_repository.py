@@ -37,6 +37,16 @@ class OrderRepository(BaseRepository[Order, OrderCreate, OrderStatusUpdate]):
             db.refresh(order)
             return order
         return None
+    
+    def get_all_order(self, db: Session) -> List[Order]:
+        try:
+            orders = db.query(Order).all()
+            print(orders)
+            return orders
+        except Exception as e:
+            print(f"Error while fetching orders: {e}")
+            return []
+
 
 # Create instance
 order_repository = OrderRepository(Order)

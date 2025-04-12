@@ -60,7 +60,7 @@ const AdminOrdersPage = () => {
         throw new Error("Authentication required");
       }
 
-      const response = await fetch(`${API_BASE_URL}/order`, {
+      const response = await fetch(`${API_BASE_URL}/order/all`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

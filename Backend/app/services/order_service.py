@@ -1,10 +1,11 @@
 from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
-from app.models.schemas import OrderCreate, Order, OrderItemBase
+from app.models.schemas import OrderCreate, Order
 from app.services.cart_service import get_user_cart, clear_cart
 from app.services.user_service import get_user_address
 from app.services.product_service import get_product_price
 from app.repositories.order_repository import order_repository
+from app.repositories.product_repository import product_repository
 from app.services.cart_service import clear_cart
 
 def create_order(db: Session, user_id: int) -> Optional[Order]:
@@ -16,14 +17,26 @@ def create_order(db: Session, user_id: int) -> Optional[Order]:
     delivery_address = get_user_address(db, user_id)
     if not delivery_address:
         return None
+    
     total_price = 0
     for product in cart.products:
         product_id = product["product_id"]
+        
+        # Check if product_name exists in the product data
+        # If not, fetch it from the database
+        if product["product_name"] == None:
+            # Fetch product details to get the name
+            product_details = product_repository.get_by_id(db, product_id=product_id)
+            if product_details:
+                product["product_name"] = product_details.product_name
+            else:
+                # Default name if product not found
+                product["product_name"] = f"Product {product_id}"
+        
         product_price = get_product_price(db, product_id)
         total_price += product_price * product["quantity"]
         product["price"] = product_price
 
-    
     order_data = OrderCreate(
         user_id=user_id,
         products=cart.products,
@@ -38,6 +51,9 @@ def create_order(db: Session, user_id: int) -> Optional[Order]:
 
 def get_order(db: Session, order_id: int) -> Optional[Order]:
     return order_repository.get_by_id(db, order_id=order_id)
+
+def get_all_orders(db: Session) -> Optional[Order]:
+    return order_repository.get_all_order(db)
 
 def get_user_orders(db: Session, user_id: int, skip: int = 0, limit: int = 100) -> List[Order]:
     return order_repository.get_by_user(db, user_id=user_id, skip=skip, limit=limit)

@@ -273,7 +273,8 @@ const CartPage = () => {
     return calculateSubtotal() + calculateDeliveryFee();
   };
 
-  // Updated handlePlaceOrder function to match the corrected cart format
+  // In the CartPage.tsx file, update the handlePlaceOrder function to include product name:
+
   const handlePlaceOrder = async () => {
     try {
       setIsSubmittingOrder(true);
@@ -289,6 +290,7 @@ const CartPage = () => {
       // Prepare order data - format based on the updated cart approach
       const orderItems = cartItems.map((item) => ({
         product_id: item.product.id,
+        product_name: item.product.name, // Added product name
         quantity: item.quantity,
       }));
 

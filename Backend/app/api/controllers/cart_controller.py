@@ -26,10 +26,9 @@ def read_cart(
     
     cart = get_user_cart(db, user_id=current_user.id)
     if not cart:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Cart not found"
-        )
+        items =  List[CartItemBase]
+        items = []
+        create_or_update_cart(db,current_user.id,items)
     
     return cart
 

@@ -1,5 +1,3 @@
-// src/pages/MyOrdersPage.tsx
-
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -10,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 // Updated interfaces to match backend data structure
 interface OrderItem {
   product_id: number;
+  product_name: string;
   quantity: number;
   price: number;
 }
@@ -146,7 +145,9 @@ const MyOrdersPage = () => {
         {order.products.map((item, index) => (
           <div className="order-item" key={index}>
             <div className="item-details">
-              <p className="item-name">Product ID: {item.product_id}</p>
+              <p className="item-name">
+                {item.product_name} (ID: {item.product_id})
+              </p>
               <p className="item-quantity">Qty: {item.quantity}</p>
             </div>
             <p className="item-price">₹{item.price}</p>
