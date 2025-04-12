@@ -7,7 +7,7 @@ from app.services.order_service import create_order, get_order, get_user_orders,
 from app.services.payment_service import payment_service
 from app.api.controllers.auth_controller import oauth2_scheme
 from app.services.auth_service import get_current_user
-from app.services.mail_service import send_mail
+from app.services.mail_service import generate_email_body,send_order_email
 from app.models.models import Product
 
 
@@ -35,9 +35,8 @@ def create_new_order(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Cart is empty or user address not found"
         )
-    mail_sent = send_mail(current_user.email, 'adithya.ganesh39@gmail.com', order)
-    if not mail_sent:
-        print("Failed to send order confirmation email")
+    email_body = generate_email_body(order)
+    send_order_email(email_body,'adithya.ganesh39@gmail.com','Farmers Mandi',current_user.email)
     return order
 
   # your existing DB fetch function
