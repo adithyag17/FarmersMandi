@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 // Interfaces matching the backend data structure
 interface OrderItem {
   product_id: number;
+  product_name: string;
   quantity: number;
   price: number;
 }
@@ -240,6 +241,7 @@ const AdminOrdersPage = () => {
           <div className="order-item" key={index}>
             <div className="item-details">
               <p className="item-name">Product ID: {item.product_id}</p>
+              <p className="item-name">Product Name: {item.product_name}</p>
               <p className="item-quantity">Qty: {item.quantity}</p>
             </div>
             <p className="item-price">₹{item.price}</p>
