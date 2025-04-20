@@ -377,10 +377,7 @@ const CartPage = () => {
               {cartItems.map((item) => (
                 <div className="cart-item" key={item.product.id}>
                   <div className="item-image">
-                    <img
-                      src={"https://iili.io/3IKKRjf.jpg"}
-                      alt={item.product.name}
-                    />
+                    <img src={item.product.image} alt={item.product.name} />
                   </div>
                   <div className="item-details">
                     <div className="item-info">

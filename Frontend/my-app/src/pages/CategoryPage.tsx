@@ -149,7 +149,7 @@ const CategoryPage = () => {
   const ProductCard = ({ product }: { product: Product }) => (
     <div className="product-card" onClick={() => handleProductClick(product)}>
       <div className="product-image">
-        <img src={"https://iili.io/3IKKRjf.jpg"} alt={product.name} />
+        <img src={product.image} alt={product.name} />
       </div>
       <div className="product-info">
         <h3 className="product-name">{product.name}</h3>

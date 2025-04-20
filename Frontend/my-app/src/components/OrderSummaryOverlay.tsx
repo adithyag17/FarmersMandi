@@ -210,7 +210,7 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
 
         <div className="product-overlay-content">
           <div className="product-overlay-image">
-            <img src={"https://iili.io/3IKKRjf.jpg"} alt={product.name} />
+            <img src={product.image} alt={product.name} />
           </div>
 
           <div className="product-overlay-details">
