@@ -215,7 +215,9 @@ const ProductOverlay: React.FC<ProductOverlayProps> = ({
 
           <div className="product-overlay-details">
             <h2>{product.name}</h2>
-            <p className="product-price">₹{product.price}</p>
+            <p className="product-price">
+              ₹{product.price}/{product.unit}
+            </p>
             <p className="product-farmer">by {product.farmer}</p>
 
             <div className="product-description">
