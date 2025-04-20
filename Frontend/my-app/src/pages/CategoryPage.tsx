@@ -70,7 +70,7 @@ const CategoryPage = () => {
         const mappedProducts: Product[] = apiProducts.map((apiProduct) => ({
           id: apiProduct.product_id,
           name: apiProduct.product_name,
-          price: apiProduct.product_price / 100, // Converting from paise to rupees if needed
+          price: apiProduct.product_price, // Converting from paise to rupees if needed
           unit: `${apiProduct.product_weight}g`, // Using weight as unit
           image:
             apiProduct.images?.length > 0
