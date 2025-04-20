@@ -383,9 +383,7 @@ const CartPage = () => {
                     <div className="item-info">
                       <h3 className="item-name">{item.product.name}</h3>
                       <p className="item-farmer">by {item.product.farmer}</p>
-                      <p className="item-price">
-                        ₹{item.product.price}/{item.product.unit}
-                      </p>
+                      <p className="item-price">₹{item.product.price}</p>
                     </div>
                     <div className="item-actions">
                       <div className="quantity-controls">
