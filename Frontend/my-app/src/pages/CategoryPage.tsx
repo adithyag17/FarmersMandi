@@ -149,7 +149,12 @@ const CategoryPage = () => {
   const ProductCard = ({ product }: { product: Product }) => (
     <div className="product-card" onClick={() => handleProductClick(product)}>
       <div className="product-image">
-        <img src={product.image} alt={product.name} />
+        <img
+          src={
+            "https://img.freepik.com/free-vector/hand-drawn-farmers-market-logo_23-2149329269.jpg?t=st=1745160778~exp=1745164378~hmac=c3b20e0d3f2da7eb417950c316137638ad9b4bc2ee33c57df30e20780cd90a6f&w=826"
+          }
+          alt={product.name}
+        />
       </div>
       <div className="product-info">
         <h3 className="product-name">{product.name}</h3>
